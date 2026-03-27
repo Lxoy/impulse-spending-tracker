@@ -1,0 +1,16 @@
+{
+	"hooks": {
+		"UserPromptSubmit": [
+			{
+				"type": "command",
+				"command": "powershell.exe -ExecutionPolicy Bypass -File \"D:\\dev\\impulse-spending-tracker\\.github\\hooks\\log_input.ps1\""
+			}
+		],
+		"PreToolUse": [
+			{
+				"type": "command",
+				"command": "powershell.exe -ExecutionPolicy Bypass -File \"D:\\dev\\impulse-spending-tracker\\.github\\hooks\\log_input.ps1\""
+			}
+		]
+	}
+}

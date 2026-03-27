@@ -1,0 +1,1 @@
+$input | Out-String | Add-Content -Path 'D:\dev\impulse-spending-tracker\.github\hooks\agent_log.txt'
