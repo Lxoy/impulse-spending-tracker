@@ -10,7 +10,6 @@ namespace impulse_spending_tracker.Models
         public decimal MonthlyNetIncome { get; set; }
         public int RiskToleranceScore { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public bool IsEmailNotificationsEnabled { get; set; } = true;
 
         public List<Purchase> Purchases { get; set; } = new();
         public List<SpendingSession> Sessions { get; set; } = new();
