@@ -1,4 +1,5 @@
 using impulse_spending_tracker.Models;
+using impulse_spending_tracker.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,7 @@ builder.Services.AddControllersWithViews();
 
 var labUsers = BuildLab1Users();
 builder.Services.AddSingleton(labUsers);
+builder.Services.AddSingleton<UserProfileMockRepository>();
 
 var app = builder.Build();
 
