@@ -1,0 +1,42 @@
+@model BudgetPlan
+
+@{
+    ViewData["Title"] = "Budget Plan Details";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="BudgetPlans" asp-action="Index">Budget Plans</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Details</li>
+    </ol>
+</nav>
+
+<section class="mb-4">
+    <h1 class="display-6 mb-2">@Model.Name</h1>
+    <p class="text-muted mb-0">Detalji budget plana i limita.</p>
+</section>
+
+<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
+    <dt class="col-sm-4 text-muted">Korisnik</dt>
+    <dd class="col-sm-8 fw-semibold">@(Model.UserProfile is null ? "-" : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName}")</dd>
+    <dt class="col-sm-4 text-muted">Vrijedi od</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.ValidFrom.ToString("yyyy-MM-dd")</dd>
+    <dt class="col-sm-4 text-muted">Vrijedi do</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.ValidTo.ToString("yyyy-MM-dd")</dd>
+    <dt class="col-sm-4 text-muted">Status</dt>
+    <dd class="col-sm-8 fw-semibold">@(Model.IsActive ? "Active" : "Inactive")</dd>
+</dl></div></div>
+
+<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
+    <dt class="col-sm-4 text-muted">Monthly limit</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.MonthlyLimit.ToString("F2") EUR</dd>
+    <dt class="col-sm-4 text-muted">Impulse cap</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.ImpulseCapPercentage.ToString("F0")%</dd>
+    <dt class="col-sm-4 text-muted">Essential limit</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.EssentialCategoryLimit.ToString("F2") EUR</dd>
+    <dt class="col-sm-4 text-muted">Discretionary limit</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.DiscretionaryCategoryLimit.ToString("F2") EUR</dd>
+</dl></div></div>
+
+<a asp-action="Index" class="btn btn-outline-primary">Natrag na listu</a>

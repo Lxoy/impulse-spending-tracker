@@ -9,6 +9,12 @@ builder.Services.AddControllersWithViews();
 var labUsers = BuildLab1Users();
 builder.Services.AddSingleton(labUsers);
 builder.Services.AddSingleton<UserProfileMockRepository>();
+builder.Services.AddSingleton<BudgetPlanMockRepository>();
+builder.Services.AddSingleton<MerchantMockRepository>();
+builder.Services.AddSingleton<PurchaseMockRepository>();
+builder.Services.AddSingleton<SpendingSessionMockRepository>();
+builder.Services.AddSingleton<TagMockRepository>();
+builder.Services.AddSingleton<WishlistItemMockRepository>();
 
 var app = builder.Build();
 

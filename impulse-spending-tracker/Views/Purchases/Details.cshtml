@@ -1,0 +1,44 @@
+@model Purchase
+
+@{
+    ViewData["Title"] = "Purchase Details";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Purchases" asp-action="Index">Purchases</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Details</li>
+    </ol>
+</nav>
+
+<section class="mb-4">
+    <h1 class="display-6 mb-2">@Model.Title</h1>
+    <p class="text-muted mb-0">Detaljni prikaz kupnje i konteksta impulsa.</p>
+</section>
+
+<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
+    <dt class="col-sm-4 text-muted">Iznos</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.Amount.ToString("F2") @Model.Currency</dd>
+    <dt class="col-sm-4 text-muted">Datum kupnje</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.PurchasedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+    <dt class="col-sm-4 text-muted">Trigger</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.TriggerType</dd>
+    <dt class="col-sm-4 text-muted">Need level</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.NeedLevel</dd>
+    <dt class="col-sm-4 text-muted">Mood before purchase</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.MoodBeforePurchase</dd>
+</dl></div></div>
+
+<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
+    <dt class="col-sm-4 text-muted">Korisnik</dt>
+    <dd class="col-sm-8 fw-semibold">@(Model.UserProfile is null ? "-" : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName}")</dd>
+    <dt class="col-sm-4 text-muted">Trgovac</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.Merchant?.Name</dd>
+    <dt class="col-sm-4 text-muted">Installments</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.Installments</dd>
+    <dt class="col-sm-4 text-muted">Notes</dt>
+    <dd class="col-sm-8 fw-semibold">@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</dd>
+</dl></div></div>
+
+<a asp-action="Index" class="btn btn-outline-primary">Natrag na listu</a>

@@ -1,0 +1,29 @@
+@model Tag
+
+@{
+    ViewData["Title"] = "Tag Details";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Tags" asp-action="Index">Tags</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Details</li>
+    </ol>
+</nav>
+
+<section class="mb-4">
+    <h1 class="display-6 mb-2">@Model.Name</h1>
+    <p class="text-muted mb-0">Detaljni prikaz taga i povezane upotrebe.</p>
+</section>
+
+<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
+    <dt class="col-sm-4 text-muted">Boja</dt>
+    <dd class="col-sm-8 fw-semibold"><span class="badge" style="background-color:@Model.ColorHex">@Model.ColorHex</span></dd>
+    <dt class="col-sm-4 text-muted">Opis</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.Description</dd>
+    <dt class="col-sm-4 text-muted">Broj kupnji</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.Purchases.Count</dd>
+</dl></div></div>
+
+<a asp-action="Index" class="btn btn-outline-primary">Natrag na listu</a>

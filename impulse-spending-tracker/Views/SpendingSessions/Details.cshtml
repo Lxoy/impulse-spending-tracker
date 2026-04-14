@@ -1,0 +1,46 @@
+@model SpendingSession
+
+@{
+    ViewData["Title"] = "Spending Session Details";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="SpendingSessions" asp-action="Index">Spending Sessions</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Details</li>
+    </ol>
+</nav>
+
+<section class="mb-4">
+    <h1 class="display-6 mb-2">Session @Model.StartedAt.ToString("yyyy-MM-dd HH:mm")</h1>
+    <p class="text-muted mb-0">Detalji shopping sessiona i potrosnje.</p>
+</section>
+
+<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
+    <dt class="col-sm-4 text-muted">Started at</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.StartedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+    <dt class="col-sm-4 text-muted">Ended at</dt>
+    <dd class="col-sm-8 fw-semibold">@(Model.EndedAt.HasValue ? Model.EndedAt.Value.ToString("yyyy-MM-dd HH:mm") : "-")</dd>
+    <dt class="col-sm-4 text-muted">Platform</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.Platform</dd>
+    <dt class="col-sm-4 text-muted">Channel</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.Channel</dd>
+</dl></div></div>
+
+<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
+    <dt class="col-sm-4 text-muted">Session budget</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.SessionBudget.ToString("F2") EUR</dd>
+    <dt class="col-sm-4 text-muted">Spent amount</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.SpentAmount.ToString("F2") EUR</dd>
+    <dt class="col-sm-4 text-muted">Items viewed</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.ItemsViewed</dd>
+    <dt class="col-sm-4 text-muted">Items added to cart</dt>
+    <dd class="col-sm-8 fw-semibold">@Model.ItemsAddedToCart</dd>
+    <dt class="col-sm-4 text-muted">Checkout completed</dt>
+    <dd class="col-sm-8 fw-semibold">@(Model.CheckoutCompleted ? "Yes" : "No")</dd>
+    <dt class="col-sm-4 text-muted">Korisnik</dt>
+    <dd class="col-sm-8 fw-semibold">@(Model.UserProfile is null ? "-" : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName}")</dd>
+</dl></div></div>
+
+<a asp-action="Index" class="btn btn-outline-primary">Natrag na listu</a>

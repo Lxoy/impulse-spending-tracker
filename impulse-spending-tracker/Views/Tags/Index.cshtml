@@ -1,0 +1,56 @@
+@model IReadOnlyList<Tag>
+
+@{
+    ViewData["Title"] = "Tags";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a asp-controller="Home" asp-action="Index">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Tags</li>
+    </ol>
+</nav>
+
+<section class="mb-4">
+    <h1 class="display-6 mb-2">Tags</h1>
+    <p class="text-muted mb-0">Klasifikacija kupnji prema trigger i kontekstu.</p>
+</section>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Nema dostupnih tagova.</div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Naziv</th>
+                        <th>Boja</th>
+                        <th>Opis</th>
+                        <th>Broj kupnji</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var tag in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">
+                            <a asp-action="Details" asp-route-id="@tag.Id">@tag.Name</a>
+                        </td>
+                        <td>
+                            <span class="badge" style="background-color:@tag.ColorHex">@tag.ColorHex</span>
+                        </td>
+                        <td>@tag.Description</td>
+                        <td>@tag.Purchases.Count</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

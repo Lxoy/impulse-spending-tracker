@@ -1,0 +1,46 @@
+@model UserProfile
+
+@{
+    ViewData["Title"] = "User Profile Details";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="UserProfiles" asp-action="Index">User Profiles</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Details</li>
+    </ol>
+</nav>
+
+<section class="mb-4">
+    <h1 class="display-6 mb-2">@Model.FirstName @Model.LastName</h1>
+    <p class="text-muted mb-0">Detaljni prikaz korisnickog profila.</p>
+</section>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Osnovni podaci</h2>
+        <dl class="row mb-0">
+            <dt class="col-sm-4 text-muted">Email</dt>
+            <dd class="col-sm-8 fw-semibold">@Model.Email</dd>
+            <dt class="col-sm-4 text-muted">Datum rodenja</dt>
+            <dd class="col-sm-8 fw-semibold">@Model.DateOfBirth.ToString("yyyy-MM-dd")</dd>
+            <dt class="col-sm-4 text-muted">Kreiran</dt>
+            <dd class="col-sm-8 fw-semibold">@Model.CreatedAt.ToString("yyyy-MM-dd")</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Financijski profil</h2>
+        <dl class="row mb-0">
+            <dt class="col-sm-4 text-muted">Mjesecni neto prihod</dt>
+            <dd class="col-sm-8 fw-semibold">@Model.MonthlyNetIncome.ToString("F2") EUR</dd>
+            <dt class="col-sm-4 text-muted">Risk tolerance score</dt>
+            <dd class="col-sm-8 fw-semibold">@Model.RiskToleranceScore</dd>
+        </dl>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-outline-primary">Natrag na listu</a>

@@ -2,7 +2,136 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="home-dashboard py-2 py-lg-4">
+    <section class="home-hero card border-0">
+        <div class="card-body p-4 p-lg-5">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-7">
+                    <p class="hero-badge mb-2">Impulse Flow Lab</p>
+                    <h1 class="hero-title mb-3">See your spending patterns before they become habits.</h1>
+                    <p class="hero-subtitle mb-4">
+                        This tracker helps you connect mood, trigger type, and channel behavior so you can make smarter purchase decisions.
+                    </p>
+                    <div class="hero-actions d-flex flex-wrap gap-2">
+                        <a class="btn btn-primary" asp-controller="Purchases" asp-action="Index">Review Purchases</a>
+                        <a class="btn btn-outline-primary" asp-controller="SpendingSessions" asp-action="Index">Open Session Insights</a>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="hero-preview p-3 p-md-4">
+                        <h2 class="h6 mb-3">Current snapshot</h2>
+                        <div class="preview-row">
+                            <span>Total users</span>
+                            <strong>3</strong>
+                        </div>
+                        <div class="preview-row">
+                            <span>Impulse purchases tracked</span>
+                            <strong>3</strong>
+                        </div>
+                        <div class="preview-row">
+                            <span>Avg risk score</span>
+                            <strong>5.3</strong>
+                        </div>
+                        <div class="preview-row mb-0">
+                            <span>Most common trigger</span>
+                            <strong>Stress</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="quick-metrics mt-4">
+        <div class="row g-3">
+            <div class="col-12 col-md-6 col-xl-3">
+                <article class="metric-tile metric-a p-3 h-100">
+                    <p class="metric-label mb-1">Monthly spend</p>
+                    <p class="metric-value mb-1">EUR 555.49</p>
+                    <p class="metric-delta mb-0">+12% vs previous cycle</p>
+                </article>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <article class="metric-tile metric-b p-3 h-100">
+                    <p class="metric-label mb-1">Impulse events</p>
+                    <p class="metric-value mb-1">6</p>
+                    <p class="metric-delta mb-0">2 this week</p>
+                </article>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <article class="metric-tile metric-c p-3 h-100">
+                    <p class="metric-label mb-1">Wishlist converted</p>
+                    <p class="metric-value mb-1">3</p>
+                    <p class="metric-delta mb-0">100% conversion</p>
+                </article>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <article class="metric-tile metric-d p-3 h-100">
+                    <p class="metric-label mb-1">Average need level</p>
+                    <p class="metric-value mb-1">6.0 / 10</p>
+                    <p class="metric-delta mb-0">Monitor low-need purchases</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="trigger-heatmap-panel mt-4 card border-0">
+        <div class="card-body p-4">
+            <h2 class="panel-title h5 mb-1">Trigger Heatmap</h2>
+            <p class="panel-subtitle text-muted mb-3">Visual intensity of impulse triggers by day of the month.</p>
+
+            <div class="trigger-heatmap-grid" aria-label="Trigger intensity grid">
+                <span class="trigger-cell intensity-1"></span>
+                <span class="trigger-cell intensity-2"></span>
+                <span class="trigger-cell intensity-2"></span>
+                <span class="trigger-cell intensity-3"></span>
+                <span class="trigger-cell intensity-1"></span>
+                <span class="trigger-cell intensity-4"></span>
+                <span class="trigger-cell intensity-3"></span>
+                <span class="trigger-cell intensity-2"></span>
+                <span class="trigger-cell intensity-5"></span>
+                <span class="trigger-cell intensity-3"></span>
+                <span class="trigger-cell intensity-1"></span>
+                <span class="trigger-cell intensity-4"></span>
+                <span class="trigger-cell intensity-2"></span>
+                <span class="trigger-cell intensity-2"></span>
+                <span class="trigger-cell intensity-3"></span>
+                <span class="trigger-cell intensity-1"></span>
+                <span class="trigger-cell intensity-5"></span>
+                <span class="trigger-cell intensity-4"></span>
+                <span class="trigger-cell intensity-3"></span>
+                <span class="trigger-cell intensity-2"></span>
+                <span class="trigger-cell intensity-1"></span>
+                <span class="trigger-cell intensity-2"></span>
+                <span class="trigger-cell intensity-4"></span>
+                <span class="trigger-cell intensity-3"></span>
+                <span class="trigger-cell intensity-2"></span>
+                <span class="trigger-cell intensity-1"></span>
+                <span class="trigger-cell intensity-3"></span>
+                <span class="trigger-cell intensity-5"></span>
+            </div>
+
+            <div class="trigger-legend mt-3">
+                <span>Low</span>
+                <span class="legend-dot intensity-1"></span>
+                <span class="legend-dot intensity-2"></span>
+                <span class="legend-dot intensity-3"></span>
+                <span class="legend-dot intensity-4"></span>
+                <span class="legend-dot intensity-5"></span>
+                <span>High</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="route-cards mt-4">
+        <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-3">
+            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">UP</p><h3 class="route-title h6">User Profiles</h3><p class="route-description">User financial baseline and risk profile.</p><a class="route-link" asp-controller="UserProfiles" asp-action="Index">Open list</a></div></article></div>
+            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">BP</p><h3 class="route-title h6">Budget Plans</h3><p class="route-description">Monthly limits and impulse caps.</p><a class="route-link" asp-controller="BudgetPlans" asp-action="Index">Open list</a></div></article></div>
+            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">PU</p><h3 class="route-title h6">Purchases</h3><p class="route-description">Actual spending events and triggers.</p><a class="route-link" asp-controller="Purchases" asp-action="Index">Open list</a></div></article></div>
+            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">SS</p><h3 class="route-title h6">Sessions</h3><p class="route-description">Behavior by platform and channel.</p><a class="route-link" asp-controller="SpendingSessions" asp-action="Index">Open list</a></div></article></div>
+            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">ME</p><h3 class="route-title h6">Merchants</h3><p class="route-description">Merchant exposure and order context.</p><a class="route-link" asp-controller="Merchants" asp-action="Index">Open list</a></div></article></div>
+            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">TG</p><h3 class="route-title h6">Tags</h3><p class="route-description">Classification signals for purchases.</p><a class="route-link" asp-controller="Tags" asp-action="Index">Open list</a></div></article></div>
+            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">WL</p><h3 class="route-title h6">Wishlist</h3><p class="route-description">Desired items and conversion state.</p><a class="route-link" asp-controller="WishlistItems" asp-action="Index">Open list</a></div></article></div>
+        </div>
+    </section>
 </div>

@@ -1,0 +1,58 @@
+@model IReadOnlyList<Merchant>
+
+@{
+    ViewData["Title"] = "Merchants";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a asp-controller="Home" asp-action="Index">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Merchants</li>
+    </ol>
+</nav>
+
+<section class="mb-4">
+    <h1 class="display-6 mb-2">Merchants</h1>
+    <p class="text-muted mb-0">Pregled trgovaca povezanih s kupnjama korisnika.</p>
+</section>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Nema dostupnih trgovaca.</div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Naziv</th>
+                        <th>Kategorija</th>
+                        <th>Drzava</th>
+                        <th>Kanal</th>
+                        <th>Prosjecna dostava</th>
+                        <th>Broj kupnji</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var merchant in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">
+                            <a asp-action="Details" asp-route-id="@merchant.Id">@merchant.Name</a>
+                        </td>
+                        <td>@merchant.Category</td>
+                        <td>@merchant.CountryCode</td>
+                        <td>@(merchant.IsOnlineOnly ? "Online" : "Online + Store")</td>
+                        <td>@(merchant.AverageDeliveryDays.HasValue ? $"{merchant.AverageDeliveryDays} dana" : "-")</td>
+                        <td>@merchant.Purchases.Count</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

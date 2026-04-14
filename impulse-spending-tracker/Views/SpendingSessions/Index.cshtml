@@ -1,0 +1,69 @@
+@model IReadOnlyList<SpendingSession>
+
+@{
+    ViewData["Title"] = "Spending Sessions";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a asp-controller="Home" asp-action="Index">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Spending Sessions</li>
+    </ol>
+</nav>
+
+<section class="mb-4">
+    <h1 class="display-6 mb-2">Spending Sessions</h1>
+    <p class="text-muted mb-0">Pregled shopping sessiona i potrosenih iznosa.</p>
+</section>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Nema dostupnih spending sessiona.</div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Start</th>
+                        <th>Korisnik</th>
+                        <th>Platforma</th>
+                        <th>Channel</th>
+                        <th>Budget</th>
+                        <th>Spent</th>
+                        <th>Checkout</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var session in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">
+                            <a asp-action="Details" asp-route-id="@session.Id">@session.StartedAt.ToString("yyyy-MM-dd HH:mm")</a>
+                        </td>
+                        <td>@(session.UserProfile is null ? "-" : $"{session.UserProfile.FirstName} {session.UserProfile.LastName}")</td>
+                        <td>@session.Platform</td>
+                        <td>@session.Channel</td>
+                        <td>@session.SessionBudget.ToString("F2") EUR</td>
+                        <td>@session.SpentAmount.ToString("F2") EUR</td>
+                        <td>
+                            @if (session.CheckoutCompleted)
+                            {
+                                <span class="badge text-bg-success">Completed</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-warning">Pending</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

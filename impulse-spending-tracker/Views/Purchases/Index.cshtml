@@ -1,0 +1,60 @@
+@model IReadOnlyList<Purchase>
+
+@{
+    ViewData["Title"] = "Purchases";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a asp-controller="Home" asp-action="Index">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Purchases</li>
+    </ol>
+</nav>
+
+<section class="mb-4">
+    <h1 class="display-6 mb-2">Purchases</h1>
+    <p class="text-muted mb-0">Lista svih zabiljezenih kupnji i impulsa.</p>
+</section>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Nema dostupnih kupnji.</div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Naslov</th>
+                        <th>Korisnik</th>
+                        <th>Trgovac</th>
+                        <th>Iznos</th>
+                        <th>Datum kupnje</th>
+                        <th>Trigger</th>
+                        <th>Need level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var purchase in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">
+                            <a asp-action="Details" asp-route-id="@purchase.Id">@purchase.Title</a>
+                        </td>
+                        <td>@(purchase.UserProfile is null ? "-" : $"{purchase.UserProfile.FirstName} {purchase.UserProfile.LastName}")</td>
+                        <td>@purchase.Merchant?.Name</td>
+                        <td>@purchase.Amount.ToString("F2") @purchase.Currency</td>
+                        <td>@purchase.PurchasedAt.ToString("yyyy-MM-dd")</td>
+                        <td>@purchase.TriggerType</td>
+                        <td>@purchase.NeedLevel</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
