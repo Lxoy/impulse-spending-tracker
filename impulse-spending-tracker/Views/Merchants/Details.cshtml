@@ -4,30 +4,66 @@
     ViewData["Title"] = "Merchant Details";
 }
 
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Merchants" asp-action="Index">Merchants</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Details</li>
-    </ol>
-</nav>
+<div class="details-shell">
+    <nav aria-label="breadcrumb" class="details-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Merchants" asp-action="Index">Merchants</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Details</li>
+        </ol>
+    </nav>
 
-<section class="mb-4">
-    <h1 class="display-6 mb-2">@Model.Name</h1>
-    <p class="text-muted mb-0">Detaljni prikaz trgovca.</p>
-</section>
+    <section class="details-hero mb-3">
+        <p class="details-kicker">Merchant Profile</p>
+        <h1 class="details-title">@Model.Name</h1>
+        <p class="details-subtitle">Merchant exposure summary including channel type, category, and purchase count impact.</p>
+        <div class="details-chip-row">
+            <span class="details-chip">@Model.Category</span>
+            <span class="details-chip">@Model.CountryCode</span>
+            <span class="details-chip">@Model.Purchases.Count Purchases</span>
+        </div>
+    </section>
 
-<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
-    <dt class="col-sm-4 text-muted">Kategorija</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.Category</dd>
-    <dt class="col-sm-4 text-muted">Drzava</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.CountryCode</dd>
-    <dt class="col-sm-4 text-muted">Kanal</dt>
-    <dd class="col-sm-8 fw-semibold">@(Model.IsOnlineOnly ? "Online" : "Online + Store")</dd>
-    <dt class="col-sm-4 text-muted">Prosjecna dostava</dt>
-    <dd class="col-sm-8 fw-semibold">@(Model.AverageDeliveryDays.HasValue ? $"{Model.AverageDeliveryDays} dana" : "-")</dd>
-    <dt class="col-sm-4 text-muted">Broj kupnji</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.Purchases.Count</dd>
-</dl></div></div>
+    <div class="row g-3">
+        <div class="col-12 col-lg-8">
+            <article class="details-panel card border-0 mb-3">
+                <div class="card-body">
+                    <h2 class="details-panel-title">Merchant Details</h2>
+                    <dl class="details-dl">
+                        <div class="details-row">
+                            <dt>Category</dt>
+                            <dd>@Model.Category</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Country</dt>
+                            <dd>@Model.CountryCode</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Channel</dt>
+                            <dd>@(Model.IsOnlineOnly ? "Online" : "Online + Store")</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Average delivery</dt>
+                            <dd>@(Model.AverageDeliveryDays.HasValue ? $"{Model.AverageDeliveryDays} days" : "-")</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Purchase count</dt>
+                            <dd>@Model.Purchases.Count</dd>
+                        </div>
+                    </dl>
+                </div>
+            </article>
+        </div>
 
-<a asp-action="Index" class="btn btn-outline-primary">Natrag na listu</a>
+        <div class="col-12 col-lg-4">
+            <aside class="details-aside mb-3">
+                <h2 class="h6 mb-2">Quick Hint</h2>
+                <p class="mb-0 text-muted">Merchants with high purchase count and fast delivery often correlate with repeated impulse behavior.</p>
+            </aside>
+        </div>
+    </div>
+
+    <div class="details-actions">
+        <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
+    </div>
+</div>

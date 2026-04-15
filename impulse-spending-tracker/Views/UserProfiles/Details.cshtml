@@ -4,43 +4,74 @@
     ViewData["Title"] = "User Profile Details";
 }
 
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-        <li class="breadcrumb-item"><a asp-controller="UserProfiles" asp-action="Index">User Profiles</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Details</li>
-    </ol>
-</nav>
+<div class="details-shell">
+    <nav aria-label="breadcrumb" class="details-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="UserProfiles" asp-action="Index">User Profiles</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Details</li>
+        </ol>
+    </nav>
 
-<section class="mb-4">
-    <h1 class="display-6 mb-2">@Model.FirstName @Model.LastName</h1>
-    <p class="text-muted mb-0">Detaljni prikaz korisnickog profila.</p>
-</section>
+    <section class="details-hero mb-3">
+        <p class="details-kicker">User Snapshot</p>
+        <h1 class="details-title">@Model.FirstName @Model.LastName</h1>
+        <p class="details-subtitle">Core identity and financial tolerance profile used for behavioral spending analysis.</p>
+        <div class="details-chip-row">
+            <span class="details-chip">Income @Model.MonthlyNetIncome.ToString("F2") EUR</span>
+            <span class="details-chip">Risk Score @Model.RiskToleranceScore</span>
+            <span class="details-chip">Member Since @Model.CreatedAt.ToString("yyyy-MM-dd")</span>
+        </div>
+    </section>
 
-<div class="card mb-3">
-    <div class="card-body">
-        <h2 class="h5 mb-3">Osnovni podaci</h2>
-        <dl class="row mb-0">
-            <dt class="col-sm-4 text-muted">Email</dt>
-            <dd class="col-sm-8 fw-semibold">@Model.Email</dd>
-            <dt class="col-sm-4 text-muted">Datum rodenja</dt>
-            <dd class="col-sm-8 fw-semibold">@Model.DateOfBirth.ToString("yyyy-MM-dd")</dd>
-            <dt class="col-sm-4 text-muted">Kreiran</dt>
-            <dd class="col-sm-8 fw-semibold">@Model.CreatedAt.ToString("yyyy-MM-dd")</dd>
-        </dl>
+    <div class="row g-3">
+        <div class="col-12 col-lg-8">
+            <article class="details-panel card border-0 mb-3">
+                <div class="card-body">
+                    <h2 class="details-panel-title">Profile Basics</h2>
+                    <dl class="details-dl">
+                        <div class="details-row">
+                            <dt>Email</dt>
+                            <dd>@Model.Email</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Date of birth</dt>
+                            <dd>@Model.DateOfBirth.ToString("yyyy-MM-dd")</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Created at</dt>
+                            <dd>@Model.CreatedAt.ToString("yyyy-MM-dd")</dd>
+                        </div>
+                    </dl>
+                </div>
+            </article>
+
+            <article class="details-panel card border-0 mb-3">
+                <div class="card-body">
+                    <h2 class="details-panel-title">Financial Profile</h2>
+                    <dl class="details-dl">
+                        <div class="details-row">
+                            <dt>Monthly net income</dt>
+                            <dd>@Model.MonthlyNetIncome.ToString("F2") EUR</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Risk tolerance score</dt>
+                            <dd>@Model.RiskToleranceScore</dd>
+                        </div>
+                    </dl>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <aside class="details-aside mb-3">
+                <h2 class="h6 mb-2">Quick Hint</h2>
+                <p class="mb-0 text-muted">Cross-check user risk score with average need level in purchases to flag mismatched behavior trends.</p>
+            </aside>
+        </div>
+    </div>
+
+    <div class="details-actions">
+        <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
     </div>
 </div>
-
-<div class="card mb-3">
-    <div class="card-body">
-        <h2 class="h5 mb-3">Financijski profil</h2>
-        <dl class="row mb-0">
-            <dt class="col-sm-4 text-muted">Mjesecni neto prihod</dt>
-            <dd class="col-sm-8 fw-semibold">@Model.MonthlyNetIncome.ToString("F2") EUR</dd>
-            <dt class="col-sm-4 text-muted">Risk tolerance score</dt>
-            <dd class="col-sm-8 fw-semibold">@Model.RiskToleranceScore</dd>
-        </dl>
-    </div>
-</div>
-
-<a asp-action="Index" class="btn btn-outline-primary">Natrag na listu</a>

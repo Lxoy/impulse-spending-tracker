@@ -4,41 +4,90 @@
     ViewData["Title"] = "Purchase Details";
 }
 
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Purchases" asp-action="Index">Purchases</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Details</li>
-    </ol>
-</nav>
+<div class="details-shell">
+    <nav aria-label="breadcrumb" class="details-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Purchases" asp-action="Index">Purchases</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Details</li>
+        </ol>
+    </nav>
 
-<section class="mb-4">
-    <h1 class="display-6 mb-2">@Model.Title</h1>
-    <p class="text-muted mb-0">Detaljni prikaz kupnje i konteksta impulsa.</p>
-</section>
+    <section class="details-hero mb-3">
+        <p class="details-kicker">Purchase Record</p>
+        <h1 class="details-title">@Model.Title</h1>
+        <p class="details-subtitle">Detailed context around amount, trigger, and emotional state at the moment of purchase.</p>
+        <div class="details-chip-row">
+            <span class="details-chip">@Model.Amount.ToString("F2") @Model.Currency</span>
+            <span class="details-chip">Trigger @Model.TriggerType</span>
+            <span class="details-chip">Need @Model.NeedLevel / 10</span>
+        </div>
+    </section>
 
-<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
-    <dt class="col-sm-4 text-muted">Iznos</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.Amount.ToString("F2") @Model.Currency</dd>
-    <dt class="col-sm-4 text-muted">Datum kupnje</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.PurchasedAt.ToString("yyyy-MM-dd HH:mm")</dd>
-    <dt class="col-sm-4 text-muted">Trigger</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.TriggerType</dd>
-    <dt class="col-sm-4 text-muted">Need level</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.NeedLevel</dd>
-    <dt class="col-sm-4 text-muted">Mood before purchase</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.MoodBeforePurchase</dd>
-</dl></div></div>
+    <div class="row g-3">
+        <div class="col-12 col-lg-8">
+            <article class="details-panel card border-0 mb-3">
+                <div class="card-body">
+                    <h2 class="details-panel-title">Purchase Snapshot</h2>
+                    <dl class="details-dl">
+                        <div class="details-row">
+                            <dt>Amount</dt>
+                            <dd>@Model.Amount.ToString("F2") @Model.Currency</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Purchased at</dt>
+                            <dd>@Model.PurchasedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Trigger</dt>
+                            <dd>@Model.TriggerType</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Need level</dt>
+                            <dd>@Model.NeedLevel</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Mood before purchase</dt>
+                            <dd>@Model.MoodBeforePurchase</dd>
+                        </div>
+                    </dl>
+                </div>
+            </article>
 
-<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
-    <dt class="col-sm-4 text-muted">Korisnik</dt>
-    <dd class="col-sm-8 fw-semibold">@(Model.UserProfile is null ? "-" : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName}")</dd>
-    <dt class="col-sm-4 text-muted">Trgovac</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.Merchant?.Name</dd>
-    <dt class="col-sm-4 text-muted">Installments</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.Installments</dd>
-    <dt class="col-sm-4 text-muted">Notes</dt>
-    <dd class="col-sm-8 fw-semibold">@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</dd>
-</dl></div></div>
+            <article class="details-panel card border-0 mb-3">
+                <div class="card-body">
+                    <h2 class="details-panel-title">Linked Context</h2>
+                    <dl class="details-dl">
+                        <div class="details-row">
+                            <dt>User</dt>
+                            <dd>@(Model.UserProfile is null ? "-" : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName}")</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Merchant</dt>
+                            <dd>@(Model.Merchant?.Name ?? "-")</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Installments</dt>
+                            <dd>@Model.Installments</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Notes</dt>
+                            <dd>@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</dd>
+                        </div>
+                    </dl>
+                </div>
+            </article>
+        </div>
 
-<a asp-action="Index" class="btn btn-outline-primary">Natrag na listu</a>
+        <div class="col-12 col-lg-4">
+            <aside class="details-aside mb-3">
+                <h2 class="h6 mb-2">Quick Hint</h2>
+                <p class="mb-0 text-muted">Low need-level purchases with high amount often indicate a stronger impulse event worth reviewing.</p>
+            </aside>
+        </div>
+    </div>
+
+    <div class="details-actions">
+        <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
+    </div>
+</div>

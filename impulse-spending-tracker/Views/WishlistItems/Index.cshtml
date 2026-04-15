@@ -4,66 +4,74 @@
     ViewData["Title"] = "Wishlist Items";
 }
 
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item">
-            <a asp-controller="Home" asp-action="Index">Home</a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">Wishlist Items</li>
-    </ol>
-</nav>
+<div class="index-shell">
+    <nav aria-label="breadcrumb" class="mb-3 index-breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Wishlist Items</li>
+        </ol>
+    </nav>
 
-<section class="mb-4">
-    <h1 class="display-6 mb-2">Wishlist Items</h1>
-    <p class="text-muted mb-0">Popis zeljenih artikala i njihov trenutni status.</p>
-</section>
-
-@if (!Model.Any())
-{
-    <div class="alert alert-info">Nema dostupnih wishlist stavki.</div>
-}
-else
-{
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Naziv</th>
-                        <th>Korisnik</th>
-                        <th>Desired</th>
-                        <th>Current</th>
-                        <th>Priority</th>
-                        <th>Dodano</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td class="fw-semibold">
-                            <a asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
-                        </td>
-                        <td>@(item.UserProfile is null ? "-" : $"{item.UserProfile.FirstName} {item.UserProfile.LastName}")</td>
-                        <td>@item.DesiredPrice.ToString("F2") EUR</td>
-                        <td>@item.CurrentPrice.ToString("F2") EUR</td>
-                        <td>@item.Priority</td>
-                        <td>@item.AddedAt.ToString("yyyy-MM-dd")</td>
-                        <td>
-                            @if (item.IsPurchased)
-                            {
-                                <span class="badge text-bg-success">Purchased</span>
-                            }
-                            else
-                            {
-                                <span class="badge text-bg-secondary">Open</span>
-                            }
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+    <section class="index-hero mb-4">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+            <div>
+                <p class="index-kicker mb-2">Intent queue</p>
+                <h1 class="display-6 mb-2">Wishlist Items</h1>
+                <p class="text-muted mb-0">List of desired items and their current status.</p>
+            </div>
+            <span class="index-count-chip">@Model.Count items</span>
         </div>
-    </div>
-}
+    </section>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info index-empty">No wishlist items available.</div>
+    }
+    else
+    {
+        <div class="index-surface card border-0">
+            <div class="index-table-head">
+                <p class="index-table-title">Purchase intent</p>
+                <span class="badge-soft">Priority funnel</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 index-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>User</th>
+                            <th>Current</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">
+                                <a class="index-link" asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
+                            </td>
+                            <td>@(item.UserProfile is null ? "-" : $"{item.UserProfile.FirstName} {item.UserProfile.LastName}")</td>
+                            <td>@item.CurrentPrice.ToString("F2") EUR</td>
+                            <td>@item.Priority</td>
+                            <td>
+                                @if (item.IsPurchased)
+                                {
+                                    <span class="badge text-bg-success">Purchased</span>
+                                }
+                                else
+                                {
+                                    <span class="badge text-bg-secondary">Open</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

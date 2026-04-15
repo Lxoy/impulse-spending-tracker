@@ -4,57 +4,65 @@
     ViewData["Title"] = "Purchases";
 }
 
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item">
-            <a asp-controller="Home" asp-action="Index">Home</a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">Purchases</li>
-    </ol>
-</nav>
+<div class="index-shell">
+    <nav aria-label="breadcrumb" class="mb-3 index-breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Purchases</li>
+        </ol>
+    </nav>
 
-<section class="mb-4">
-    <h1 class="display-6 mb-2">Purchases</h1>
-    <p class="text-muted mb-0">Lista svih zabiljezenih kupnji i impulsa.</p>
-</section>
-
-@if (!Model.Any())
-{
-    <div class="alert alert-info">Nema dostupnih kupnji.</div>
-}
-else
-{
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Naslov</th>
-                        <th>Korisnik</th>
-                        <th>Trgovac</th>
-                        <th>Iznos</th>
-                        <th>Datum kupnje</th>
-                        <th>Trigger</th>
-                        <th>Need level</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach (var purchase in Model)
-                {
-                    <tr>
-                        <td class="fw-semibold">
-                            <a asp-action="Details" asp-route-id="@purchase.Id">@purchase.Title</a>
-                        </td>
-                        <td>@(purchase.UserProfile is null ? "-" : $"{purchase.UserProfile.FirstName} {purchase.UserProfile.LastName}")</td>
-                        <td>@purchase.Merchant?.Name</td>
-                        <td>@purchase.Amount.ToString("F2") @purchase.Currency</td>
-                        <td>@purchase.PurchasedAt.ToString("yyyy-MM-dd")</td>
-                        <td>@purchase.TriggerType</td>
-                        <td>@purchase.NeedLevel</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+    <section class="index-hero mb-4">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+            <div>
+                <p class="index-kicker mb-2">Live feed</p>
+                <h1 class="display-6 mb-2">Purchases</h1>
+                <p class="text-muted mb-0">List of all recorded purchases and impulse events.</p>
+            </div>
+            <span class="index-count-chip">@Model.Count purchases</span>
         </div>
-    </div>
-}
+    </section>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info index-empty">No purchases available.</div>
+    }
+    else
+    {
+        <div class="index-surface card border-0">
+            <div class="index-table-head">
+                <p class="index-table-title">Purchase timeline</p>
+                <span class="badge-soft">Impulse signals</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 index-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>User</th>
+                            <th>Merchant</th>
+                            <th>Amount</th>
+                            <th>Purchase Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var purchase in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">
+                                <a class="index-link" asp-action="Details" asp-route-id="@purchase.Id">@purchase.Title</a>
+                            </td>
+                            <td>@(purchase.UserProfile is null ? "-" : $"{purchase.UserProfile.FirstName} {purchase.UserProfile.LastName}")</td>
+                            <td>@purchase.Merchant?.Name</td>
+                            <td>@purchase.Amount.ToString("F2") @purchase.Currency</td>
+                            <td>@purchase.PurchasedAt.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

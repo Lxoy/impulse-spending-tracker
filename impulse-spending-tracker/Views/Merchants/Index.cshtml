@@ -4,55 +4,63 @@
     ViewData["Title"] = "Merchants";
 }
 
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item">
-            <a asp-controller="Home" asp-action="Index">Home</a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">Merchants</li>
-    </ol>
-</nav>
+<div class="index-shell">
+    <nav aria-label="breadcrumb" class="mb-3 index-breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Merchants</li>
+        </ol>
+    </nav>
 
-<section class="mb-4">
-    <h1 class="display-6 mb-2">Merchants</h1>
-    <p class="text-muted mb-0">Pregled trgovaca povezanih s kupnjama korisnika.</p>
-</section>
-
-@if (!Model.Any())
-{
-    <div class="alert alert-info">Nema dostupnih trgovaca.</div>
-}
-else
-{
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Naziv</th>
-                        <th>Kategorija</th>
-                        <th>Drzava</th>
-                        <th>Kanal</th>
-                        <th>Prosjecna dostava</th>
-                        <th>Broj kupnji</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach (var merchant in Model)
-                {
-                    <tr>
-                        <td class="fw-semibold">
-                            <a asp-action="Details" asp-route-id="@merchant.Id">@merchant.Name</a>
-                        </td>
-                        <td>@merchant.Category</td>
-                        <td>@merchant.CountryCode</td>
-                        <td>@(merchant.IsOnlineOnly ? "Online" : "Online + Store")</td>
-                        <td>@(merchant.AverageDeliveryDays.HasValue ? $"{merchant.AverageDeliveryDays} dana" : "-")</td>
-                        <td>@merchant.Purchases.Count</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+    <section class="index-hero mb-4">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+            <div>
+                <p class="index-kicker mb-2">Commerce map</p>
+                <h1 class="display-6 mb-2">Merchants</h1>
+                <p class="text-muted mb-0">Overview of merchants connected to user purchases.</p>
+            </div>
+            <span class="index-count-chip">@Model.Count merchants</span>
         </div>
-    </div>
-}
+    </section>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info index-empty">No merchants available.</div>
+    }
+    else
+    {
+        <div class="index-surface card border-0">
+            <div class="index-table-head">
+                <p class="index-table-title">Merchant network</p>
+                <span class="badge-soft">Channel mix</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 index-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Country</th>
+                            <th>Channel</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var merchant in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">
+                                <a class="index-link" asp-action="Details" asp-route-id="@merchant.Id">@merchant.Name</a>
+                            </td>
+                            <td>@merchant.Category</td>
+                            <td>@merchant.CountryCode</td>
+                            <td>@(merchant.IsOnlineOnly ? "Online" : "Online + Store")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

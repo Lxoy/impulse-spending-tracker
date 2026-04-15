@@ -4,39 +4,86 @@
     ViewData["Title"] = "Budget Plan Details";
 }
 
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-        <li class="breadcrumb-item"><a asp-controller="BudgetPlans" asp-action="Index">Budget Plans</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Details</li>
-    </ol>
-</nav>
+<div class="details-shell">
+    <nav aria-label="breadcrumb" class="details-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="BudgetPlans" asp-action="Index">Budget Plans</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Details</li>
+        </ol>
+    </nav>
 
-<section class="mb-4">
-    <h1 class="display-6 mb-2">@Model.Name</h1>
-    <p class="text-muted mb-0">Detalji budget plana i limita.</p>
-</section>
+    <section class="details-hero mb-3">
+        <p class="details-kicker">Budget Overview</p>
+        <h1 class="details-title">@Model.Name</h1>
+        <p class="details-subtitle">Detailed budget boundaries, validity period, and impulse constraints for this plan.</p>
+        <div class="details-chip-row">
+            <span class="details-chip">Monthly @Model.MonthlyLimit.ToString("F2") EUR</span>
+            <span class="details-chip">Impulse Cap @Model.ImpulseCapPercentage.ToString("F0")%</span>
+            <span class="details-chip">@(Model.IsActive ? "Active" : "Inactive")</span>
+        </div>
+    </section>
 
-<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
-    <dt class="col-sm-4 text-muted">Korisnik</dt>
-    <dd class="col-sm-8 fw-semibold">@(Model.UserProfile is null ? "-" : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName}")</dd>
-    <dt class="col-sm-4 text-muted">Vrijedi od</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.ValidFrom.ToString("yyyy-MM-dd")</dd>
-    <dt class="col-sm-4 text-muted">Vrijedi do</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.ValidTo.ToString("yyyy-MM-dd")</dd>
-    <dt class="col-sm-4 text-muted">Status</dt>
-    <dd class="col-sm-8 fw-semibold">@(Model.IsActive ? "Active" : "Inactive")</dd>
-</dl></div></div>
+    <div class="row g-3">
+        <div class="col-12 col-lg-8">
+            <article class="details-panel card border-0 mb-3">
+                <div class="card-body">
+                    <h2 class="details-panel-title">Plan Timeline</h2>
+                    <dl class="details-dl">
+                        <div class="details-row">
+                            <dt>Owner</dt>
+                            <dd>@(Model.UserProfile is null ? "-" : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName}")</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Valid from</dt>
+                            <dd>@Model.ValidFrom.ToString("yyyy-MM-dd")</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Valid to</dt>
+                            <dd>@Model.ValidTo.ToString("yyyy-MM-dd")</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Status</dt>
+                            <dd>@(Model.IsActive ? "Active" : "Inactive")</dd>
+                        </div>
+                    </dl>
+                </div>
+            </article>
 
-<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
-    <dt class="col-sm-4 text-muted">Monthly limit</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.MonthlyLimit.ToString("F2") EUR</dd>
-    <dt class="col-sm-4 text-muted">Impulse cap</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.ImpulseCapPercentage.ToString("F0")%</dd>
-    <dt class="col-sm-4 text-muted">Essential limit</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.EssentialCategoryLimit.ToString("F2") EUR</dd>
-    <dt class="col-sm-4 text-muted">Discretionary limit</dt>
-    <dd class="col-sm-8 fw-semibold">@Model.DiscretionaryCategoryLimit.ToString("F2") EUR</dd>
-</dl></div></div>
+            <article class="details-panel card border-0 mb-3">
+                <div class="card-body">
+                    <h2 class="details-panel-title">Spending Limits</h2>
+                    <dl class="details-dl">
+                        <div class="details-row">
+                            <dt>Monthly limit</dt>
+                            <dd>@Model.MonthlyLimit.ToString("F2") EUR</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Impulse cap</dt>
+                            <dd>@Model.ImpulseCapPercentage.ToString("F0")%</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Essential limit</dt>
+                            <dd>@Model.EssentialCategoryLimit.ToString("F2") EUR</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Discretionary limit</dt>
+                            <dd>@Model.DiscretionaryCategoryLimit.ToString("F2") EUR</dd>
+                        </div>
+                    </dl>
+                </div>
+            </article>
+        </div>
 
-<a asp-action="Index" class="btn btn-outline-primary">Natrag na listu</a>
+        <div class="col-12 col-lg-4">
+            <aside class="details-aside mb-3">
+                <h2 class="h6 mb-2">Quick Hint</h2>
+                <p class="mb-0 text-muted">Use impulse cap and discretionary limit together to quickly spot where discretionary purchases are likely to overflow.</p>
+            </aside>
+        </div>
+    </div>
+
+    <div class="details-actions">
+        <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
+    </div>
+</div>

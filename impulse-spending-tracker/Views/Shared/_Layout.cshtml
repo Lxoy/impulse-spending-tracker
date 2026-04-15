@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - impulse_spending_tracker</title>
+    <title>@ViewData["Title"] - Spendora</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -11,15 +11,21 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">impulse_spending_tracker</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+        <nav class="navbar navbar-expand-lg navbar-light app-navbar mb-3">
+            <div class="container-fluid app-navbar__container">
+                <a class="navbar-brand app-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span class="app-brand__mark" aria-hidden="true">S</span>
+                    <span class="app-brand__text">
+                        <span class="app-brand__title">Spendora</span>
+                        <small class="app-brand__tag">Impulse spending tracker</small>
+                    </span>
+                </a>
+                <button class="navbar-toggler app-navbar__toggler" type="button" data-bs-toggle="collapse" data-bs-target="#appNav" aria-controls="appNav"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse app-navbar__collapse" id="appNav">
+                    <ul class="navbar-nav app-nav app-nav--primary">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
@@ -35,6 +41,8 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Purchases" asp-action="Index">Purchases</a>
                         </li>
+                    </ul>
+                    <ul class="navbar-nav app-nav app-nav--secondary ms-lg-auto">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="SpendingSessions" asp-action="Index">Sessions</a>
                         </li>
@@ -43,9 +51,6 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="WishlistItems" asp-action="Index">Wishlist</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
                 </div>
@@ -58,9 +63,17 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - impulse_spending_tracker - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="footer app-footer">
+        <div class="container app-footer__container">
+            <div class="app-footer__brand">
+                <p class="app-footer__title mb-1">Spendora</p>
+                <p class="app-footer__sentence mb-0">Track impulse triggers, purchase history, and budget intent in one calm dashboard.</p>
+            </div>
+            <div class="app-footer__meta">
+                <span>&copy; @DateTime.Now.Year Spendora. All rights reserved.</span>
+                <span class="app-footer__dot" aria-hidden="true">•</span>
+                <span>Use the top navigation to explore entities and insights.</span>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
