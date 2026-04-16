@@ -761,6 +761,71 @@ main > .container-fluid {
   font-weight: 700;
 }
 
+.index-table-note {
+  margin: 0.3rem 0 0;
+  font-size: 0.86rem;
+  color: #676252;
+  letter-spacing: 0.01em;
+}
+
+.list-signal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.25rem;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.list-signal--ok {
+  color: #0f5132;
+  background: rgba(25, 135, 84, 0.14);
+  border-color: rgba(25, 135, 84, 0.26);
+}
+
+.list-signal--warn {
+  color: #7a4b00;
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.34);
+}
+
+.list-signal--danger {
+  color: #842029;
+  background: rgba(220, 53, 69, 0.14);
+  border-color: rgba(220, 53, 69, 0.3);
+}
+
+.list-signal--info {
+  color: #0c5460;
+  background: rgba(13, 202, 240, 0.16);
+  border-color: rgba(13, 202, 240, 0.32);
+}
+
+.list-signal--brand {
+  color: #0b5f59;
+  background: rgba(15, 118, 110, 0.12);
+  border-color: rgba(15, 118, 110, 0.28);
+}
+
+.list-signal--muted {
+  color: #5f5a4d;
+  background: rgba(95, 90, 77, 0.12);
+  border-color: rgba(95, 90, 77, 0.22);
+}
+
+.list-signal--mono {
+  min-width: 6.25rem;
+  text-align: right;
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+}
+
 .index-table thead th {
   background: rgba(248, 247, 243, 0.95);
 }
@@ -784,18 +849,11 @@ main > .container-fluid {
   color: #084a45;
 }
 
-.badge-soft {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  border: 1px solid rgba(95, 90, 77, 0.22);
-  background: rgba(248, 247, 243, 0.95);
-  color: #3f3b32;
-  font-size: 0.74rem;
-  font-weight: 700;
-  padding: 0.28rem 0.55rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.panel-meta {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #676252;
+  font-weight: 600;
 }
 
 .index-empty {

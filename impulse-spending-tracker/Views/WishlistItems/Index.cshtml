@@ -33,8 +33,10 @@
     {
         <div class="index-surface card border-0">
             <div class="index-table-head">
-                <p class="index-table-title">Purchase intent</p>
-                <span class="badge-soft">Priority funnel</span>
+                <div>
+                    <p class="index-table-title">Purchase intent</p>
+                    <p class="index-table-note">Wishlist priorities with current price tracking and readiness status.</p>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0 index-table">
@@ -50,21 +52,34 @@
                     <tbody>
                     @foreach (var item in Model)
                     {
+                        var priceDeltaRatio = item.DesiredPrice <= 0 ? 0m : (item.CurrentPrice - item.DesiredPrice) / item.DesiredPrice;
+                        var priceSignalClass = item.CurrentPrice <= item.DesiredPrice
+                            ? "list-signal list-signal--ok"
+                            : priceDeltaRatio > 0.15m
+                                ? "list-signal list-signal--danger"
+                                : "list-signal list-signal--warn";
+                        var prioritySignalClass = item.Priority switch
+                        {
+                            >= 4 => "list-signal list-signal--danger",
+                            3 => "list-signal list-signal--warn",
+                            _ => "list-signal list-signal--muted"
+                        };
+
                         <tr>
                             <td class="fw-semibold">
                                 <a class="index-link" asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
                             </td>
                             <td>@(item.UserProfile is null ? "-" : $"{item.UserProfile.FirstName} {item.UserProfile.LastName}")</td>
-                            <td>@item.CurrentPrice.ToString("F2") EUR</td>
-                            <td>@item.Priority</td>
+                            <td><span class="@($"{priceSignalClass} list-signal--mono")">@item.CurrentPrice.ToString("F2") EUR</span></td>
+                            <td><span class="@prioritySignalClass">@($"P{item.Priority}")</span></td>
                             <td>
                                 @if (item.IsPurchased)
                                 {
-                                    <span class="badge text-bg-success">Purchased</span>
+                                    <span class="list-signal list-signal--ok">Purchased</span>
                                 }
                                 else
                                 {
-                                    <span class="badge text-bg-secondary">Open</span>
+                                    <span class="list-signal list-signal--brand">Open</span>
                                 }
                             </td>
                         </tr>

@@ -33,8 +33,10 @@
     {
         <div class="index-surface card border-0">
             <div class="index-table-head">
-                <p class="index-table-title">Purchase timeline</p>
-                <span class="badge-soft">Impulse signals</span>
+                <div>
+                    <p class="index-table-title">Purchase timeline</p>
+                    <p class="index-table-note">Newest purchases first, then higher amounts within the same period.</p>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0 index-table">
@@ -50,13 +52,20 @@
                     <tbody>
                     @foreach (var purchase in Model)
                     {
+                        var amountSignalClass = purchase.Amount switch
+                        {
+                            >= 200m => "list-signal list-signal--danger",
+                            >= 100m => "list-signal list-signal--warn",
+                            _ => "list-signal list-signal--ok"
+                        };
+
                         <tr>
                             <td class="fw-semibold">
                                 <a class="index-link" asp-action="Details" asp-route-id="@purchase.Id">@purchase.Title</a>
                             </td>
                             <td>@(purchase.UserProfile is null ? "-" : $"{purchase.UserProfile.FirstName} {purchase.UserProfile.LastName}")</td>
                             <td>@purchase.Merchant?.Name</td>
-                            <td>@purchase.Amount.ToString("F2") @purchase.Currency</td>
+                            <td><span class="@($"{amountSignalClass} list-signal--mono")">@purchase.Amount.ToString("F2") @purchase.Currency</span></td>
                             <td>@purchase.PurchasedAt.ToString("yyyy-MM-dd")</td>
                         </tr>
                     }

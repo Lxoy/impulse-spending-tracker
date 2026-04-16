@@ -33,8 +33,10 @@
     {
         <div class="index-surface card border-0">
             <div class="index-table-head">
-                <p class="index-table-title">Merchant network</p>
-                <span class="badge-soft">Channel mix</span>
+                <div>
+                    <p class="index-table-title">Merchant network</p>
+                    <p class="index-table-note">Merchant list sorted by name and category, including market and channel.</p>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0 index-table">
@@ -49,13 +51,17 @@
                     <tbody>
                     @foreach (var merchant in Model)
                     {
+                        var channelSignalClass = merchant.IsOnlineOnly
+                            ? "list-signal list-signal--info"
+                            : "list-signal list-signal--brand";
+
                         <tr>
                             <td class="fw-semibold">
                                 <a class="index-link" asp-action="Details" asp-route-id="@merchant.Id">@merchant.Name</a>
                             </td>
                             <td>@merchant.Category</td>
                             <td>@merchant.CountryCode</td>
-                            <td>@(merchant.IsOnlineOnly ? "Online" : "Online + Store")</td>
+                            <td><span class="@channelSignalClass">@(merchant.IsOnlineOnly ? "Online" : "Online + Store")</span></td>
                         </tr>
                     }
                     </tbody>

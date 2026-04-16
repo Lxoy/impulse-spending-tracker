@@ -33,8 +33,10 @@
     {
         <div class="index-surface card border-0">
             <div class="index-table-head">
-                <p class="index-table-title">Monthly guardrails</p>
-                <span class="badge-soft">Active monitoring</span>
+                <div>
+                    <p class="index-table-title">Monthly guardrails</p>
+                    <p class="index-table-note">Plan limits, active status, and validity window for each user profile.</p>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0 index-table">
@@ -51,6 +53,16 @@
                     <tbody>
                     @foreach (var plan in Model)
                     {
+                        var coveredSpend = plan.CoveredPurchases.Sum(p => p.Amount);
+                        var limitUtilization = plan.MonthlyLimit <= 0 ? -1m : coveredSpend / plan.MonthlyLimit;
+                        var limitSignalClass = !plan.IsActive
+                            ? "list-signal list-signal--muted"
+                            : limitUtilization > 1m
+                                ? "list-signal list-signal--danger"
+                                : limitUtilization >= 0.7m
+                                    ? "list-signal list-signal--warn"
+                                    : "list-signal list-signal--ok";
+
                         <tr>
                             <td class="fw-semibold">
                                 <a class="index-link" asp-action="Details" asp-route-id="@plan.Id">@plan.Name</a>
@@ -58,15 +70,15 @@
                             <td>@(plan.UserProfile is null ? "-" : $"{plan.UserProfile.FirstName} {plan.UserProfile.LastName}")</td>
                             <td>@plan.ValidFrom.ToString("yyyy-MM-dd")</td>
                             <td>@plan.ValidTo.ToString("yyyy-MM-dd")</td>
-                            <td>@plan.MonthlyLimit.ToString("F2") EUR</td>
+                            <td><span class="@($"{limitSignalClass} list-signal--mono")">@plan.MonthlyLimit.ToString("F2") EUR</span></td>
                             <td>
                                 @if (plan.IsActive)
                                 {
-                                    <span class="badge text-bg-success">Active</span>
+                                    <span class="list-signal list-signal--ok">Active</span>
                                 }
                                 else
                                 {
-                                    <span class="badge text-bg-secondary">Inactive</span>
+                                    <span class="list-signal list-signal--muted">Inactive</span>
                                 }
                             </td>
                         </tr>

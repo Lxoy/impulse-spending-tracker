@@ -33,8 +33,10 @@
     {
         <div class="index-surface card border-0">
             <div class="index-table-head">
-                <p class="index-table-title">Semantic labels</p>
-                <span class="badge-soft">Trigger context</span>
+                <div>
+                    <p class="index-table-title">Semantic labels</p>
+                    <p class="index-table-note">Tag names, visual color markers, and how often each tag appears in purchases.</p>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0 index-table">
@@ -48,6 +50,15 @@
                     <tbody>
                     @foreach (var tag in Model)
                     {
+                        var purchaseCount = tag.Purchases.Count;
+                        var usageSignalClass = purchaseCount switch
+                        {
+                            >= 5 => "list-signal list-signal--danger",
+                            >= 3 => "list-signal list-signal--warn",
+                            >= 1 => "list-signal list-signal--ok",
+                            _ => "list-signal list-signal--muted"
+                        };
+
                         <tr>
                             <td class="fw-semibold">
                                 <a class="index-link" asp-action="Details" asp-route-id="@tag.Id">@tag.Name</a>
@@ -55,7 +66,7 @@
                             <td>
                                 <span class="badge" style="background-color:@tag.ColorHex">@tag.ColorHex</span>
                             </td>
-                            <td>@tag.Purchases.Count</td>
+                            <td><span class="@usageSignalClass">@purchaseCount</span></td>
                         </tr>
                     }
                     </tbody>
