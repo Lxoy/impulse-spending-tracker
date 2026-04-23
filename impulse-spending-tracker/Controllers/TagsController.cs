@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace impulse_spending_tracker.Controllers
 {
+    [Route("tags")]
     public class TagsController : Controller
     {
-        private readonly TagMockRepository _tagRepository;
+        private readonly TagRepository _tagRepository;
 
-        public TagsController(TagMockRepository tagRepository)
+        public TagsController(TagRepository tagRepository)
         {
             _tagRepository = tagRepository;
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var tags = _tagRepository
@@ -22,7 +24,8 @@ namespace impulse_spending_tracker.Controllers
             return View(tags);
         }
 
-        public IActionResult Details(Guid id)
+        [HttpGet("{id:int}")]
+        public IActionResult Details(int id)
         {
             var tag = _tagRepository.GetById(id);
             if (tag is null)

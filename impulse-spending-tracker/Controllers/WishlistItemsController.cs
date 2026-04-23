@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace impulse_spending_tracker.Controllers
 {
+    [Route("wishlist")]
     public class WishlistItemsController : Controller
     {
-        private readonly WishlistItemMockRepository _wishlistRepository;
+        private readonly WishlistItemRepository _wishlistRepository;
 
-        public WishlistItemsController(WishlistItemMockRepository wishlistRepository)
+        public WishlistItemsController(WishlistItemRepository wishlistRepository)
         {
             _wishlistRepository = wishlistRepository;
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var items = _wishlistRepository
@@ -24,7 +26,8 @@ namespace impulse_spending_tracker.Controllers
             return View(items);
         }
 
-        public IActionResult Details(Guid id)
+        [HttpGet("{id:int}")]
+        public IActionResult Details(int id)
         {
             var item = _wishlistRepository.GetById(id);
             if (item is null)

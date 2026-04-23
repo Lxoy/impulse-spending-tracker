@@ -1,13 +1,27 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace impulse_spending_tracker.Models
 {
     public class Purchase
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid UserProfileId { get; set; }
-        public Guid MerchantId { get; set; }
-        public Guid? SpendingSessionId { get; set; }
-        public Guid? BudgetPlanId { get; set; }
-        public Guid? WishlistItemId { get; set; }
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey(nameof(UserProfile))]
+        public int UserProfileId { get; set; }
+
+        [ForeignKey(nameof(Merchant))]
+        public int MerchantId { get; set; }
+
+        [ForeignKey(nameof(SpendingSession))]
+        public int? SpendingSessionId { get; set; }
+
+        [ForeignKey(nameof(BudgetPlan))]
+        public int? BudgetPlanId { get; set; }
+
+        [ForeignKey(nameof(WishlistItem))]
+        public int? WishlistItemId { get; set; }
 
         public string Title { get; set; } = string.Empty;
         public decimal Amount { get; set; }
@@ -19,11 +33,11 @@ namespace impulse_spending_tracker.Models
         public int Installments { get; set; }
         public string? Notes { get; set; }
 
-        public UserProfile? UserProfile { get; set; }
-        public Merchant? Merchant { get; set; }
-        public SpendingSession? SpendingSession { get; set; }
-        public BudgetPlan? BudgetPlan { get; set; }
-        public WishlistItem? WishlistItem { get; set; }
-        public List<Tag> Tags { get; set; } = new();
+        public virtual UserProfile? UserProfile { get; set; }
+        public virtual Merchant? Merchant { get; set; }
+        public virtual SpendingSession? SpendingSession { get; set; }
+        public virtual BudgetPlan? BudgetPlan { get; set; }
+        public virtual WishlistItem? WishlistItem { get; set; }
+        public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
     }
 }

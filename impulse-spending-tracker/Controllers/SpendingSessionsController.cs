@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace impulse_spending_tracker.Controllers
 {
+    [Route("sessions")]
     public class SpendingSessionsController : Controller
     {
-        private readonly SpendingSessionMockRepository _sessionRepository;
+        private readonly SpendingSessionRepository _sessionRepository;
 
-        public SpendingSessionsController(SpendingSessionMockRepository sessionRepository)
+        public SpendingSessionsController(SpendingSessionRepository sessionRepository)
         {
             _sessionRepository = sessionRepository;
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var sessions = _sessionRepository
@@ -23,7 +25,8 @@ namespace impulse_spending_tracker.Controllers
             return View(sessions);
         }
 
-        public IActionResult Details(Guid id)
+        [HttpGet("{id:int}")]
+        public IActionResult Details(int id)
         {
             var session = _sessionRepository.GetById(id);
             if (session is null)

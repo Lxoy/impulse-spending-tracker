@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace impulse_spending_tracker.Controllers
 {
+    [Route("merchants")]
     public class MerchantsController : Controller
     {
-        private readonly MerchantMockRepository _merchantRepository;
+        private readonly MerchantRepository _merchantRepository;
 
-        public MerchantsController(MerchantMockRepository merchantRepository)
+        public MerchantsController(MerchantRepository merchantRepository)
         {
             _merchantRepository = merchantRepository;
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var merchants = _merchantRepository
@@ -23,7 +25,8 @@ namespace impulse_spending_tracker.Controllers
             return View(merchants);
         }
 
-        public IActionResult Details(Guid id)
+        [HttpGet("{id:int}")]
+        public IActionResult Details(int id)
         {
             var merchant = _merchantRepository.GetById(id);
             if (merchant is null)

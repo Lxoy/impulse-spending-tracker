@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace impulse_spending_tracker.Controllers
 {
+    [Route("purchases-log")]
     public class PurchasesController : Controller
     {
-        private readonly PurchaseMockRepository _purchaseRepository;
+        private readonly PurchaseRepository _purchaseRepository;
 
-        public PurchasesController(PurchaseMockRepository purchaseRepository)
+        public PurchasesController(PurchaseRepository purchaseRepository)
         {
             _purchaseRepository = purchaseRepository;
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var purchases = _purchaseRepository
@@ -23,7 +25,8 @@ namespace impulse_spending_tracker.Controllers
             return View(purchases);
         }
 
-        public IActionResult Details(Guid id)
+        [HttpGet("{id:int}")]
+        public IActionResult Details(int id)
         {
             var purchase = _purchaseRepository.GetById(id);
             if (purchase is null)

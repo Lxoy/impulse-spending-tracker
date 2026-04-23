@@ -18,7 +18,7 @@ namespace impulse_spending_tracker.Repositories
             return _plans;
         }
 
-        public BudgetPlan? GetById(Guid id)
+        public BudgetPlan? GetById(int id)
         {
             return _plans.SingleOrDefault(p => p.Id == id);
         }

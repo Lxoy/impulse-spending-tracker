@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace impulse_spending_tracker.Controllers
 {
+    [Route("users")]
     public class UserProfilesController : Controller
     {
-        private readonly UserProfileMockRepository _userProfileRepository;
+        private readonly UserProfileRepository _userProfileRepository;
 
-        public UserProfilesController(UserProfileMockRepository userProfileRepository)
+        public UserProfilesController(UserProfileRepository userProfileRepository)
         {
             _userProfileRepository = userProfileRepository;
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var users = _userProfileRepository
@@ -23,7 +25,8 @@ namespace impulse_spending_tracker.Controllers
             return View(users);
         }
 
-        public IActionResult Details(Guid id)
+        [HttpGet("{id:int}")]
+        public IActionResult Details(int id)
         {
             var user = _userProfileRepository.GetById(id);
             if (user is null)

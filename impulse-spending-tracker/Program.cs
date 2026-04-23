@@ -1,24 +1,28 @@
+using impulse_spending_tracker.Data;
 using impulse_spending_tracker.Models;
 using impulse_spending_tracker.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-var labUsers = BuildLab1Users();
-builder.Services.AddSingleton(labUsers);
-builder.Services.AddSingleton<UserProfileMockRepository>();
-builder.Services.AddSingleton<BudgetPlanMockRepository>();
-builder.Services.AddSingleton<MerchantMockRepository>();
-builder.Services.AddSingleton<PurchaseMockRepository>();
-builder.Services.AddSingleton<SpendingSessionMockRepository>();
-builder.Services.AddSingleton<TagMockRepository>();
-builder.Services.AddSingleton<WishlistItemMockRepository>();
+var connectionString = builder.Configuration.GetConnectionString("ImpulseSpendingDbContext")
+    ?? throw new InvalidOperationException("Connection string 'ImpulseSpendingDbContext' is missing.");
+
+builder.Services.AddDbContext<ImpulseSpendingDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddScoped<UserProfileRepository>();
+builder.Services.AddScoped<BudgetPlanRepository>();
+builder.Services.AddScoped<MerchantRepository>();
+builder.Services.AddScoped<PurchaseRepository>();
+builder.Services.AddScoped<SpendingSessionRepository>();
+builder.Services.AddScoped<TagRepository>();
+builder.Services.AddScoped<WishlistItemRepository>();
 
 var app = builder.Build();
-
-RunLab1LinqQueries(labUsers, app.Logger);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -34,6 +38,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",
@@ -455,8 +460,10 @@ List<UserProfile> BuildLab1Users()
     fashionStore.Purchases.Add(user2Purchase);
     homeStore.Purchases.Add(user3Purchase);
 
-    stressTag.Purchases.AddRange(new[] { user1Purchase, user3Purchase });
-    saleTag.Purchases.AddRange(new[] { user2Purchase, user3Purchase });
+    stressTag.Purchases.Add(user1Purchase);
+    stressTag.Purchases.Add(user3Purchase);
+    saleTag.Purchases.Add(user2Purchase);
+    saleTag.Purchases.Add(user3Purchase);
     socialTag.Purchases.Add(user1Purchase);
 
     return new List<UserProfile> { user1, user2, user3 };

@@ -18,7 +18,7 @@ namespace impulse_spending_tracker.Repositories
             return _wishlistItems;
         }
 
-        public WishlistItem? GetById(Guid id)
+        public WishlistItem? GetById(int id)
         {
             return _wishlistItems.SingleOrDefault(w => w.Id == id);
         }

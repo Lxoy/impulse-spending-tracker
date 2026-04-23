@@ -16,7 +16,7 @@ namespace impulse_spending_tracker.Repositories
             return _users;
         }
 
-        public UserProfile? GetById(Guid id)
+        public UserProfile? GetById(int id)
         {
             return _users.SingleOrDefault(u => u.Id == id);
         }

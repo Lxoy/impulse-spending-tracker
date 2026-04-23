@@ -1,9 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace impulse_spending_tracker.Models
 {
     public class SpendingSession
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid UserProfileId { get; set; }
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey(nameof(UserProfile))]
+        public int UserProfileId { get; set; }
 
         public DateTime StartedAt { get; set; }
         public DateTime? EndedAt { get; set; }
@@ -15,7 +21,7 @@ namespace impulse_spending_tracker.Models
         public int ItemsAddedToCart { get; set; }
         public bool CheckoutCompleted { get; set; }
 
-        public UserProfile? UserProfile { get; set; }
-        public List<Purchase> Purchases { get; set; } = new();
+        public virtual UserProfile? UserProfile { get; set; }
+        public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
     }
 }

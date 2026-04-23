@@ -20,7 +20,7 @@ namespace impulse_spending_tracker.Repositories
             return _tags;
         }
 
-        public Tag? GetById(Guid id)
+        public Tag? GetById(int id)
         {
             return _tags.SingleOrDefault(t => t.Id == id);
         }

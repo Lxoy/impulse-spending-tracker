@@ -1,9 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace impulse_spending_tracker.Models
 {
     public class BudgetPlan
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid UserProfileId { get; set; }
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey(nameof(UserProfile))]
+        public int UserProfileId { get; set; }
 
         public string Name { get; set; } = string.Empty;
         public DateTime ValidFrom { get; set; }
@@ -14,7 +20,7 @@ namespace impulse_spending_tracker.Models
         public decimal DiscretionaryCategoryLimit { get; set; }
         public bool IsActive { get; set; }
 
-        public UserProfile? UserProfile { get; set; }
-        public List<Purchase> CoveredPurchases { get; set; } = new();
+        public virtual UserProfile? UserProfile { get; set; }
+        public virtual ICollection<Purchase> CoveredPurchases { get; set; } = new List<Purchase>();
     }
 }

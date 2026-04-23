@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace impulse_spending_tracker.Controllers
 {
+    [Route("budget-plans")]
     public class BudgetPlansController : Controller
     {
-        private readonly BudgetPlanMockRepository _budgetPlanRepository;
+        private readonly BudgetPlanRepository _budgetPlanRepository;
 
-        public BudgetPlansController(BudgetPlanMockRepository budgetPlanRepository)
+        public BudgetPlansController(BudgetPlanRepository budgetPlanRepository)
         {
             _budgetPlanRepository = budgetPlanRepository;
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var plans = _budgetPlanRepository
@@ -24,7 +26,8 @@ namespace impulse_spending_tracker.Controllers
             return View(plans);
         }
 
-        public IActionResult Details(Guid id)
+        [HttpGet("{id:int}")]
+        public IActionResult Details(int id)
         {
             var plan = _budgetPlanRepository.GetById(id);
             if (plan is null)

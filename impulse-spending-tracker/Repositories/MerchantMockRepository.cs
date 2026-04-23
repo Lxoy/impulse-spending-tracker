@@ -21,7 +21,7 @@ namespace impulse_spending_tracker.Repositories
             return _merchants;
         }
 
-        public Merchant? GetById(Guid id)
+        public Merchant? GetById(int id)
         {
             return _merchants.SingleOrDefault(m => m.Id == id);
         }

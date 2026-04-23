@@ -18,7 +18,7 @@ namespace impulse_spending_tracker.Repositories
             return _sessions;
         }
 
-        public SpendingSession? GetById(Guid id)
+        public SpendingSession? GetById(int id)
         {
             return _sessions.SingleOrDefault(s => s.Id == id);
         }

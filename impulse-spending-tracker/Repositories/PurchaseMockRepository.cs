@@ -18,7 +18,7 @@ namespace impulse_spending_tracker.Repositories
             return _purchases;
         }
 
-        public Purchase? GetById(Guid id)
+        public Purchase? GetById(int id)
         {
             return _purchases.SingleOrDefault(p => p.Id == id);
         }
