@@ -19,8 +19,8 @@
         <p class="details-subtitle">Detailed budget boundaries, validity period, and impulse constraints for this plan.</p>
         <div class="details-chip-row">
             <span class="details-chip">Monthly @Model.MonthlyLimit.ToString("F2") EUR</span>
-            <span class="details-chip">Impulse Cap @Model.ImpulseCapPercentage.ToString("F0")%</span>
-            <span class="details-chip">@(Model.IsActive ? "Active" : "Inactive")</span>
+            <span class="details-chip">Impulse Cap @(Model.ImpulseCapPercentage.HasValue ? Model.ImpulseCapPercentage.Value.ToString("F0") + "%" : "-")</span>
+            <span class="details-chip">@(Model.IsActive == true ? "Active" : "Inactive")</span>
         </div>
     </section>
 
@@ -36,15 +36,15 @@
                         </div>
                         <div class="details-row">
                             <dt>Valid from</dt>
-                            <dd>@Model.ValidFrom.ToString("yyyy-MM-dd")</dd>
+                            <dd>@(Model.ValidFrom?.ToString("yyyy-MM-dd") ?? "-")</dd>
                         </div>
                         <div class="details-row">
                             <dt>Valid to</dt>
-                            <dd>@Model.ValidTo.ToString("yyyy-MM-dd")</dd>
+                            <dd>@(Model.ValidTo?.ToString("yyyy-MM-dd") ?? "-")</dd>
                         </div>
                         <div class="details-row">
                             <dt>Status</dt>
-                            <dd>@(Model.IsActive ? "Active" : "Inactive")</dd>
+                            <dd>@(Model.IsActive == true ? "Active" : "Inactive")</dd>
                         </div>
                     </dl>
                 </div>
@@ -60,15 +60,15 @@
                         </div>
                         <div class="details-row">
                             <dt>Impulse cap</dt>
-                            <dd>@Model.ImpulseCapPercentage.ToString("F0")%</dd>
+                            <dd>@(Model.ImpulseCapPercentage.HasValue ? Model.ImpulseCapPercentage.Value.ToString("F0") + "%" : "-")</dd>
                         </div>
                         <div class="details-row">
                             <dt>Essential limit</dt>
-                            <dd>@Model.EssentialCategoryLimit.ToString("F2") EUR</dd>
+                            <dd>@(Model.EssentialCategoryLimit.HasValue ? Model.EssentialCategoryLimit.Value.ToString("F2") + " EUR" : "-")</dd>
                         </div>
                         <div class="details-row">
                             <dt>Discretionary limit</dt>
-                            <dd>@Model.DiscretionaryCategoryLimit.ToString("F2") EUR</dd>
+                            <dd>@(Model.DiscretionaryCategoryLimit.HasValue ? Model.DiscretionaryCategoryLimit.Value.ToString("F2") + " EUR" : "-")</dd>
                         </div>
                     </dl>
                 </div>
@@ -84,6 +84,8 @@
     </div>
 
     <div class="details-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit plan</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
         <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
     </div>
 </div>

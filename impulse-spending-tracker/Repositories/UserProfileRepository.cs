@@ -26,5 +26,24 @@ namespace impulse_spending_tracker.Repositories
                 .AsNoTracking()
                 .SingleOrDefault(u => u.Id == id);
         }
+
+        public void Create(UserProfile user)
+        {
+            _dbContext.UserProfiles.Add(user);
+            _dbContext.SaveChanges();
+        }
+
+        public void Update(UserProfile user)
+        {
+            _dbContext.UserProfiles.Update(user);
+            _dbContext.SaveChanges();
+        }
+
+        public void Delete(UserProfile user)
+        {
+            user.IsDeleted = true;
+            _dbContext.UserProfiles.Update(user);
+            _dbContext.SaveChanges();
+        }
     }
 }

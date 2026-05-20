@@ -30,5 +30,24 @@ namespace impulse_spending_tracker.Repositories
                 .Include(p => p.CoveredPurchases)
                 .SingleOrDefault(p => p.Id == id);
         }
+
+        public void Create(BudgetPlan plan)
+        {
+            _dbContext.BudgetPlans.Add(plan);
+            _dbContext.SaveChanges();
+        }
+
+        public void Update(BudgetPlan plan)
+        {
+            _dbContext.BudgetPlans.Update(plan);
+            _dbContext.SaveChanges();
+        }
+
+        public void Delete(BudgetPlan plan)
+        {
+            plan.IsDeleted = true;
+            _dbContext.BudgetPlans.Update(plan);
+            _dbContext.SaveChanges();
+        }
     }
 }

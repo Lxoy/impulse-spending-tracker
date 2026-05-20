@@ -1,0 +1,126 @@
+@model Purchase
+
+@{
+    ViewData["Title"] = "Edit Purchase";
+}
+
+<div class="form-shell">
+    <nav aria-label="breadcrumb" class="form-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Purchases</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id">Details</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+    </nav>
+
+    <section class="form-hero mb-3">
+        <p class="form-kicker">Purchases</p>
+        <h1 class="form-title">Edit Purchase</h1>
+        <p class="form-subtitle">Refine purchase details, links, and trigger signals.</p>
+    </section>
+
+    <section class="form-surface card border-0">
+        <div class="card-body">
+            <form asp-action="Edit" method="post" class="form-grid row g-3" novalidate>
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="col-12 col-md-6 position-relative">
+                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                    {
+                        InputName = nameof(Model.UserProfileId),
+                        ValidationMessageFor = nameof(Model.UserProfileId),
+                        Label = "User",
+                        Placeholder = "Search users...",
+                        SearchUrl = Url.Action("Users", "Lookup") ?? "/lookup/users",
+                        EmptyMessage = "No users found.",
+                        SelectedId = Model.UserProfileId,
+                        SelectedText = Model.UserProfile is null ? string.Empty : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName} ({Model.UserProfile.Email})"
+                    })
+                </div>
+                <div class="col-12 col-md-6 position-relative">
+                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                    {
+                        InputName = nameof(Model.MerchantId),
+                        ValidationMessageFor = nameof(Model.MerchantId),
+                        Label = "Merchant",
+                        Placeholder = "Search merchants...",
+                        SearchUrl = Url.Action("Merchants", "Lookup") ?? "/lookup/merchants",
+                        EmptyMessage = "No merchants found.",
+                        SelectedId = Model.MerchantId,
+                        SelectedText = Model.Merchant is null ? string.Empty : $"{Model.Merchant.Name} ({Model.Merchant.Category}, {Model.Merchant.CountryCode})"
+                    })
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="SpendingSessionId" class="form-label"></label>
+                    <select asp-for="SpendingSessionId" asp-items="@ViewBag.SpendingSessionId" class="form-select"></select>
+                    <span asp-validation-for="SpendingSessionId" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="BudgetPlanId" class="form-label"></label>
+                    <select asp-for="BudgetPlanId" asp-items="@ViewBag.BudgetPlanId" class="form-select"></select>
+                    <span asp-validation-for="BudgetPlanId" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="WishlistItemId" class="form-label"></label>
+                    <select asp-for="WishlistItemId" asp-items="@ViewBag.WishlistItemId" class="form-select"></select>
+                    <span asp-validation-for="WishlistItemId" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label asp-for="Amount" class="form-label"></label>
+                    <input asp-for="Amount" class="form-control" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label asp-for="Currency" class="form-label"></label>
+                    <input asp-for="Currency" class="form-control" />
+                    <span asp-validation-for="Currency" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-4">
+                    @await Html.PartialAsync("_DatePickerControl", Model.PurchasedAt, new ViewDataDictionary(ViewData) { { "IncludeTime", true }, { "For", nameof(Model.PurchasedAt) } })
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="MoodBeforePurchase" class="form-label"></label>
+                    <input asp-for="MoodBeforePurchase" class="form-control" />
+                    <span asp-validation-for="MoodBeforePurchase" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label asp-for="NeedLevel" class="form-label"></label>
+                    <input asp-for="NeedLevel" class="form-control" />
+                    <span asp-validation-for="NeedLevel" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label asp-for="Installments" class="form-label"></label>
+                    <input asp-for="Installments" class="form-control" />
+                    <span asp-validation-for="Installments" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="TriggerType" class="form-label"></label>
+                    <select asp-for="TriggerType" asp-items="Html.GetEnumSelectList<ImpulseTriggerType>()" class="form-select"></select>
+                    <span asp-validation-for="TriggerType" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Notes" class="form-label"></label>
+                    <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 form-actions d-flex flex-wrap gap-2 pt-2">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Back to details</a>
+                    <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

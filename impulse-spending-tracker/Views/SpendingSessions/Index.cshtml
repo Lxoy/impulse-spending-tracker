@@ -15,13 +15,38 @@
     </nav>
 
     <section class="index-hero mb-4">
-        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-            <div>
+        <div class="index-hero__grid">
+            <div class="index-hero__copy">
                 <p class="index-kicker mb-2">Behavior traces</p>
                 <h1 class="display-6 mb-2">Spending Sessions</h1>
                 <p class="text-muted mb-0">Overview of shopping sessions and spending outcomes.</p>
             </div>
-            <span class="index-count-chip">@Model.Count sessions</span>
+            <div class="index-hero__actions">
+                <span class="index-count-chip" id="spendingSessionCount" data-singular="session" data-plural="sessions">@Model.Count sessions</span>
+                <a class="btn btn-primary" asp-action="Create">Create session</a>
+            </div>
+        </div>
+
+        <div class="index-search-panel">
+            <div class="index-search-panel__header">
+                <div>
+                    <p class="index-search-panel__eyebrow mb-1">Live filter</p>
+                    <p class="index-search-panel__title mb-0">Search by user, platform, or channel</p>
+                </div>
+                <span class="index-search-panel__hint">Results update as you type</span>
+            </div>
+        <input type="text"
+               class="form-control index-search-input"
+               placeholder="Search by user, platform, or channel..."
+               aria-label="Search spending sessions"
+               data-ajax-filter
+               data-url="@Url.Action("Filter", "SpendingSessions")"
+               data-target="#spendingSessionTableBody"
+               data-count-target="#spendingSessionCount"
+               data-singular="session"
+               data-plural="sessions"
+               data-empty-message="No spending sessions match your search."
+               data-column-count="7" />
         </div>
     </section>
 
@@ -48,40 +73,11 @@
                             <th>Budget</th>
                             <th>Spent</th>
                             <th>Checkout</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    @foreach (var session in Model)
-                    {
-                        var utilization = session.SessionBudget <= 0 ? -1m : session.SpentAmount / session.SessionBudget;
-                        var spentSignalClass = session.SessionBudget <= 0
-                            ? "list-signal list-signal--muted"
-                            : utilization > 1m
-                                ? "list-signal list-signal--danger"
-                                : utilization >= 0.8m
-                                    ? "list-signal list-signal--warn"
-                                    : "list-signal list-signal--ok";
-
-                        <tr>
-                            <td class="fw-semibold">
-                                <a class="index-link" asp-action="Details" asp-route-id="@session.Id">@session.StartedAt.ToString("yyyy-MM-dd HH:mm")</a>
-                            </td>
-                            <td>@(session.UserProfile is null ? "-" : $"{session.UserProfile.FirstName} {session.UserProfile.LastName}")</td>
-                            <td>@session.Platform</td>
-                            <td><span class="list-signal list-signal--muted list-signal--mono">@session.SessionBudget.ToString("F2") EUR</span></td>
-                            <td><span class="@($"{spentSignalClass} list-signal--mono")">@session.SpentAmount.ToString("F2") EUR</span></td>
-                            <td>
-                                @if (session.CheckoutCompleted)
-                                {
-                                    <span class="list-signal list-signal--ok">Completed</span>
-                                }
-                                else
-                                {
-                                    <span class="list-signal list-signal--warn">Pending</span>
-                                }
-                            </td>
-                        </tr>
-                    }
+                    <tbody id="spendingSessionTableBody">
+                    @await Html.PartialAsync("_SpendingSessionTableRows", Model)
                     </tbody>
                 </table>
             </div>

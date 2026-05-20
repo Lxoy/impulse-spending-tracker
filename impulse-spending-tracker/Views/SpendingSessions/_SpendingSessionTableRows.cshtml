@@ -1,0 +1,40 @@
+@model IEnumerable<SpendingSession>
+
+@foreach (var session in Model)
+{
+    var utilization = session.SessionBudget <= 0 ? -1m : session.SpentAmount / session.SessionBudget;
+    var spentSignalClass = session.SessionBudget <= 0
+        ? "list-signal list-signal--muted"
+        : utilization > 1m
+            ? "list-signal list-signal--danger"
+            : utilization >= 0.8m
+                ? "list-signal list-signal--warn"
+                : "list-signal list-signal--ok";
+
+    <tr>
+        <td class="fw-semibold">
+            <a class="index-link" asp-action="Details" asp-route-id="@session.Id">@session.StartedAt.ToString("yyyy-MM-dd HH:mm")</a>
+        </td>
+        <td>@(session.UserProfile is null ? "-" : $"{session.UserProfile.FirstName} {session.UserProfile.LastName}")</td>
+        <td>@session.Platform</td>
+        <td><span class="list-signal list-signal--muted list-signal--mono">@session.SessionBudget.ToString("F2") EUR</span></td>
+        <td><span class="@($"{spentSignalClass} list-signal--mono")">@session.SpentAmount.ToString("F2") EUR</span></td>
+        <td>
+            @if (session.CheckoutCompleted)
+            {
+                <span class="list-signal list-signal--ok">Completed</span>
+            }
+            else
+            {
+                <span class="list-signal list-signal--warn">Pending</span>
+            }
+        </td>
+        <td class="text-end">
+            <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@session.Id">Details</a>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@session.Id">Edit</a>
+                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@session.Id">Delete</a>
+            </div>
+        </td>
+    </tr>
+}

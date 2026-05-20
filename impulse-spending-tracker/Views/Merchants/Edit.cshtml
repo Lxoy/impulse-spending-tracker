@@ -1,0 +1,69 @@
+@model Merchant
+
+@{
+    ViewData["Title"] = "Edit Merchant";
+}
+
+<div class="form-shell">
+    <nav aria-label="breadcrumb" class="form-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Merchants</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id">Details</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+    </nav>
+
+    <section class="form-hero mb-3">
+        <p class="form-kicker">Merchants</p>
+        <h1 class="form-title">Edit Merchant</h1>
+        <p class="form-subtitle">Update merchant metadata and channel profile.</p>
+    </section>
+
+    <section class="form-surface card border-0">
+        <div class="card-body">
+            <form asp-action="Edit" method="post" class="form-grid row g-3" novalidate>
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="Category" class="form-label"></label>
+                    <input asp-for="Category" class="form-control" />
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="CountryCode" class="form-label"></label>
+                    <input asp-for="CountryCode" class="form-control" />
+                    <span asp-validation-for="CountryCode" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="AverageDeliveryDays" class="form-label"></label>
+                    <input asp-for="AverageDeliveryDays" class="form-control" />
+                    <span asp-validation-for="AverageDeliveryDays" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input asp-for="IsOnlineOnly" class="form-check-input" />
+                        <label asp-for="IsOnlineOnly" class="form-check-label"></label>
+                    </div>
+                    <span asp-validation-for="IsOnlineOnly" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 form-actions d-flex flex-wrap gap-2 pt-2">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Back to details</a>
+                    <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

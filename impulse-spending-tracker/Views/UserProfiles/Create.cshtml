@@ -1,0 +1,67 @@
+@model UserProfile
+
+@{
+    ViewData["Title"] = "Create User Profile";
+}
+
+<div class="form-shell">
+    <nav aria-label="breadcrumb" class="form-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">User Profiles</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </ol>
+    </nav>
+
+    <section class="form-hero mb-3">
+        <p class="form-kicker">User Profiles</p>
+        <h1 class="form-title">Create User Profile</h1>
+        <p class="form-subtitle">Add a new profile with baseline financial and risk data.</p>
+    </section>
+
+    <section class="form-surface card border-0">
+        <div class="card-body">
+            <form asp-action="Create" method="post" class="form-grid row g-3" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    @await Html.PartialAsync("_DatePickerControl", Model.DateOfBirth, new ViewDataDictionary(ViewData) { { "For", nameof(Model.DateOfBirth) } })
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="MonthlyNetIncome" class="form-label"></label>
+                    <input asp-for="MonthlyNetIncome" class="form-control" />
+                    <span asp-validation-for="MonthlyNetIncome" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="RiskToleranceScore" class="form-label"></label>
+                    <input asp-for="RiskToleranceScore" class="form-control" />
+                    <span asp-validation-for="RiskToleranceScore" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 form-actions d-flex flex-wrap gap-2 pt-2">
+                    <button type="submit" class="btn btn-primary">Create profile</button>
+                    <a asp-action="Index" class="btn btn-outline-primary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

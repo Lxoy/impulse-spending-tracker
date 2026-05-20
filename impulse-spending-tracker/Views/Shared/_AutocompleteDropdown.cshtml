@@ -1,0 +1,26 @@
+@model AutocompleteDropdownModel
+
+@{
+    var hasValidation = !string.IsNullOrWhiteSpace(Model.ValidationMessageFor);
+    var hiddenValue = Model.SelectedId?.ToString() ?? (hasValidation ? "0" : string.Empty);
+    var rangeMax = int.MaxValue.ToString();
+}
+
+<div class="autocomplete-dropdown" data-autocomplete-dropdown data-empty-message="@Model.EmptyMessage">
+    <label class="form-label" for="@($"{Model.InputName}Search")">@Model.Label@if(hasValidation){ <span class="text-danger ms-1">*</span> }</label>
+    <input type="hidden" id="@Model.InputName" name="@Model.InputName" value="@hiddenValue" class="autocomplete-dropdown__value" @(hasValidation ? $"data-val=\"true\" data-val-range=\"A selection is required.\" data-val-range-min=\"1\" data-val-range-max=\"{rangeMax}\" data-required-int=\"true\"" : string.Empty) />
+    <input type="text"
+           id="@($"{Model.InputName}Search")"
+           class="form-control"
+           autocomplete="off"
+           placeholder="@Model.Placeholder"
+           value="@Model.SelectedText"
+           data-autocomplete-input
+           data-autocomplete-url="@Model.SearchUrl"
+           data-autocomplete-target="@Model.InputName" />
+    <div class="list-group position-absolute w-100 shadow-sm d-none" style="z-index: 1050;" data-autocomplete-results></div>
+    @if (hasValidation)
+    {
+        @Html.ValidationMessage(Model.ValidationMessageFor, string.Empty, new { @class = "text-danger" })
+    }
+</div>

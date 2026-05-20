@@ -30,5 +30,24 @@ namespace impulse_spending_tracker.Repositories
                 .Include(w => w.ConvertedPurchase)
                 .SingleOrDefault(w => w.Id == id);
         }
+
+        public void Create(WishlistItem item)
+        {
+            _dbContext.WishlistItems.Add(item);
+            _dbContext.SaveChanges();
+        }
+
+        public void Update(WishlistItem item)
+        {
+            _dbContext.WishlistItems.Update(item);
+            _dbContext.SaveChanges();
+        }
+
+        public void Delete(WishlistItem item)
+        {
+            item.IsDeleted = true;
+            _dbContext.WishlistItems.Update(item);
+            _dbContext.SaveChanges();
+        }
     }
 }

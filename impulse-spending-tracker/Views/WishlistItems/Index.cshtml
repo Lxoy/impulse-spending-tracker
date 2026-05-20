@@ -15,13 +15,38 @@
     </nav>
 
     <section class="index-hero mb-4">
-        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-            <div>
+        <div class="index-hero__grid">
+            <div class="index-hero__copy">
                 <p class="index-kicker mb-2">Intent queue</p>
                 <h1 class="display-6 mb-2">Wishlist Items</h1>
                 <p class="text-muted mb-0">List of desired items and their current status.</p>
             </div>
-            <span class="index-count-chip">@Model.Count items</span>
+            <div class="index-hero__actions">
+                <span class="index-count-chip" id="wishlistItemCount" data-singular="item" data-plural="items">@Model.Count items</span>
+                <a class="btn btn-primary" asp-action="Create">Create wishlist item</a>
+            </div>
+        </div>
+
+        <div class="index-search-panel">
+            <div class="index-search-panel__header">
+                <div>
+                    <p class="index-search-panel__eyebrow mb-1">Live filter</p>
+                    <p class="index-search-panel__title mb-0">Search by item name</p>
+                </div>
+                <span class="index-search-panel__hint">Results update as you type</span>
+            </div>
+        <input type="text"
+               class="form-control index-search-input"
+               placeholder="Search by item name..."
+               aria-label="Search wishlist items by name"
+               data-ajax-filter
+               data-url="@Url.Action("Filter", "WishlistItems")"
+               data-target="#wishlistItemTableBody"
+               data-count-target="#wishlistItemCount"
+               data-singular="item"
+               data-plural="items"
+               data-empty-message="No wishlist items match your search."
+               data-column-count="6" />
         </div>
     </section>
 
@@ -47,43 +72,11 @@
                             <th>Current</th>
                             <th>Priority</th>
                             <th>Status</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    @foreach (var item in Model)
-                    {
-                        var priceDeltaRatio = item.DesiredPrice <= 0 ? 0m : (item.CurrentPrice - item.DesiredPrice) / item.DesiredPrice;
-                        var priceSignalClass = item.CurrentPrice <= item.DesiredPrice
-                            ? "list-signal list-signal--ok"
-                            : priceDeltaRatio > 0.15m
-                                ? "list-signal list-signal--danger"
-                                : "list-signal list-signal--warn";
-                        var prioritySignalClass = item.Priority switch
-                        {
-                            >= 4 => "list-signal list-signal--danger",
-                            3 => "list-signal list-signal--warn",
-                            _ => "list-signal list-signal--muted"
-                        };
-
-                        <tr>
-                            <td class="fw-semibold">
-                                <a class="index-link" asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
-                            </td>
-                            <td>@(item.UserProfile is null ? "-" : $"{item.UserProfile.FirstName} {item.UserProfile.LastName}")</td>
-                            <td><span class="@($"{priceSignalClass} list-signal--mono")">@item.CurrentPrice.ToString("F2") EUR</span></td>
-                            <td><span class="@prioritySignalClass">@($"P{item.Priority}")</span></td>
-                            <td>
-                                @if (item.IsPurchased)
-                                {
-                                    <span class="list-signal list-signal--ok">Purchased</span>
-                                }
-                                else
-                                {
-                                    <span class="list-signal list-signal--brand">Open</span>
-                                }
-                            </td>
-                        </tr>
-                    }
+                    <tbody id="wishlistItemTableBody">
+                    @await Html.PartialAsync("_WishlistItemTableRows", Model)
                     </tbody>
                 </table>
             </div>

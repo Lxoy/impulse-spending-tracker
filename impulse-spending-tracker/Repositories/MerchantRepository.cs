@@ -28,5 +28,24 @@ namespace impulse_spending_tracker.Repositories
                 .Include(m => m.Purchases)
                 .SingleOrDefault(m => m.Id == id);
         }
+
+        public void Create(Merchant merchant)
+        {
+            _dbContext.Merchants.Add(merchant);
+            _dbContext.SaveChanges();
+        }
+
+        public void Update(Merchant merchant)
+        {
+            _dbContext.Merchants.Update(merchant);
+            _dbContext.SaveChanges();
+        }
+
+        public void Delete(Merchant merchant)
+        {
+            merchant.IsDeleted = true;
+            _dbContext.Merchants.Update(merchant);
+            _dbContext.SaveChanges();
+        }
     }
 }

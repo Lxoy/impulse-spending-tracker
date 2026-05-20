@@ -15,13 +15,39 @@
     </nav>
 
     <section class="index-hero mb-4">
-        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-            <div>
+        <div class="index-hero__grid">
+            <div class="index-hero__copy">
                 <p class="index-kicker mb-2">Commerce map</p>
                 <h1 class="display-6 mb-2">Merchants</h1>
                 <p class="text-muted mb-0">Overview of merchants connected to user purchases.</p>
             </div>
-            <span class="index-count-chip">@Model.Count merchants</span>
+            <div class="index-hero__actions">
+                <span class="index-count-chip" id="merchantCount" data-singular="merchant" data-plural="merchants">@Model.Count merchants</span>
+                <a class="btn btn-primary" asp-action="Create">Create merchant</a>
+            </div>
+        </div>
+
+        <div class="index-search-panel">
+            <div class="index-search-panel__header">
+                <div>
+                    <p class="index-search-panel__eyebrow mb-1">Live filter</p>
+                    <p class="index-search-panel__title mb-0">Search by merchant name</p>
+                </div>
+                <span class="index-search-panel__hint">Results update as you type</span>
+            </div>
+        <input type="text"
+               id="merchantSearch"
+               class="form-control index-search-input"
+               placeholder="Search by merchant name..."
+               aria-label="Search merchants by name"
+               data-ajax-filter
+               data-url="@Url.Action("Filter", "Merchants")"
+               data-target="#merchantTableBody"
+               data-count-target="#merchantCount"
+               data-singular="merchant"
+               data-plural="merchants"
+               data-empty-message="No merchants match your search."
+               data-column-count="5" />
         </div>
     </section>
 
@@ -46,24 +72,11 @@
                             <th>Category</th>
                             <th>Country</th>
                             <th>Channel</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    @foreach (var merchant in Model)
-                    {
-                        var channelSignalClass = merchant.IsOnlineOnly
-                            ? "list-signal list-signal--info"
-                            : "list-signal list-signal--brand";
-
-                        <tr>
-                            <td class="fw-semibold">
-                                <a class="index-link" asp-action="Details" asp-route-id="@merchant.Id">@merchant.Name</a>
-                            </td>
-                            <td>@merchant.Category</td>
-                            <td>@merchant.CountryCode</td>
-                            <td><span class="@channelSignalClass">@(merchant.IsOnlineOnly ? "Online" : "Online + Store")</span></td>
-                        </tr>
-                    }
+                    <tbody id="merchantTableBody">
+                    @await Html.PartialAsync("_MerchantTableRows", Model)
                     </tbody>
                 </table>
             </div>

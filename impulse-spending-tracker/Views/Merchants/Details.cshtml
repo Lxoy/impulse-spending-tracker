@@ -40,11 +40,11 @@
                         </div>
                         <div class="details-row">
                             <dt>Channel</dt>
-                            <dd>@(Model.IsOnlineOnly ? "Online" : "Online + Store")</dd>
+                            <dd>@(Model.IsOnlineOnly == true ? "Online" : "Online + Store")</dd>
                         </div>
                         <div class="details-row">
                             <dt>Average delivery</dt>
-                            <dd>@(Model.AverageDeliveryDays.HasValue ? $"{Model.AverageDeliveryDays} days" : "-")</dd>
+                            <dd>@(Model.AverageDeliveryDays.HasValue ? $"{Model.AverageDeliveryDays.Value} days" : "-")</dd>
                         </div>
                         <div class="details-row">
                             <dt>Purchase count</dt>
@@ -64,6 +64,8 @@
     </div>
 
     <div class="details-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit merchant</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
         <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
     </div>
 </div>

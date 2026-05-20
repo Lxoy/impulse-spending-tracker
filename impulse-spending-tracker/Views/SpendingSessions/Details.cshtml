@@ -92,6 +92,8 @@
     </div>
 
     <div class="details-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit session</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
         <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
     </div>
 </div>

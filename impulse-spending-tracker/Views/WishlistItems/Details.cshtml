@@ -56,7 +56,7 @@
 
             <article class="details-panel card border-0 mb-3">
                 <div class="card-body">
-                    <h2 class="details-panel-title">Price and Reasoning</h2>
+                    <h2 class="details-panel-title">Price and Notes</h2>
                     <dl class="details-dl">
                         <div class="details-row">
                             <dt>Desired price</dt>
@@ -67,11 +67,11 @@
                             <dd>@Model.CurrentPrice.ToString("F2") EUR</dd>
                         </div>
                         <div class="details-row">
-                            <dt>Reason</dt>
+                            <dt>Notes</dt>
                             <dd>@(string.IsNullOrWhiteSpace(Model.Reason) ? "-" : Model.Reason)</dd>
                         </div>
                         <div class="details-row">
-                            <dt>Link</dt>
+                            <dt>Link URL</dt>
                             <dd>
                                 @if (string.IsNullOrWhiteSpace(Model.LinkUrl))
                                 {
@@ -97,6 +97,8 @@
     </div>
 
     <div class="details-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit wishlist item</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
         <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
     </div>
 </div>

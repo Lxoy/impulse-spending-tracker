@@ -1,5 +1,6 @@
 using impulse_spending_tracker.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace impulse_spending_tracker.Controllers
 {
@@ -25,6 +26,20 @@ namespace impulse_spending_tracker.Controllers
             return View(merchants);
         }
 
+        [HttpGet("filter")]
+        public IActionResult Filter(string query)
+        {
+            var merchants = _merchantRepository
+                .GetAll()
+                .Where(m => string.IsNullOrEmpty(query) || 
+                            m.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(m => m.Name)
+                .ThenBy(m => m.Category)
+                .ToList();
+
+            return PartialView("_MerchantTableRows", merchants);
+        }
+
         [HttpGet("{id:int}")]
         public IActionResult Details(int id)
         {
@@ -35,6 +50,84 @@ namespace impulse_spending_tracker.Controllers
             }
 
             return View(merchant);
+        }
+
+        [HttpGet("create")]
+        public IActionResult Create()
+        {
+            return View(new Models.Merchant());
+        }
+
+        [HttpPost("create")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Models.Merchant merchant)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(merchant);
+            }
+
+            _merchantRepository.Create(merchant);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet("edit")]
+        public IActionResult Edit(int id)
+        {
+            var merchant = _merchantRepository.GetById(id);
+            if (merchant is null)
+            {
+                return NotFound();
+            }
+
+            return View(merchant);
+        }
+
+        [HttpPost("edit")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Models.Merchant merchant)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(merchant);
+            }
+
+            _merchantRepository.Update(merchant);
+            return RedirectToAction(nameof(Details), new { id = merchant.Id });
+        }
+
+        [HttpGet("delete")]
+        public IActionResult Delete(int id)
+        {
+            var merchant = _merchantRepository.GetById(id);
+            if (merchant is null)
+            {
+                return NotFound();
+            }
+
+            return View(merchant);
+        }
+
+        [HttpPost("delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(Models.Merchant model)
+        {
+            var merchant = _merchantRepository.GetById(model.Id);
+            if (merchant is null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                _merchantRepository.Delete(merchant);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to delete this merchant because related purchases exist.");
+                return View(merchant);
+            }
         }
     }
 }

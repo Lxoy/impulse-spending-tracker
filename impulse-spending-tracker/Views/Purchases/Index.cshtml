@@ -15,13 +15,38 @@
     </nav>
 
     <section class="index-hero mb-4">
-        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-            <div>
+        <div class="index-hero__grid">
+            <div class="index-hero__copy">
                 <p class="index-kicker mb-2">Live feed</p>
                 <h1 class="display-6 mb-2">Purchases</h1>
                 <p class="text-muted mb-0">List of all recorded purchases and impulse events.</p>
             </div>
-            <span class="index-count-chip">@Model.Count purchases</span>
+            <div class="index-hero__actions">
+                <span class="index-count-chip" id="purchaseCount" data-singular="purchase" data-plural="purchases">@Model.Count purchases</span>
+                <a class="btn btn-primary" asp-action="Create">Create purchase</a>
+            </div>
+        </div>
+
+        <div class="index-search-panel">
+            <div class="index-search-panel__header">
+                <div>
+                    <p class="index-search-panel__eyebrow mb-1">Live filter</p>
+                    <p class="index-search-panel__title mb-0">Search by purchase title</p>
+                </div>
+                <span class="index-search-panel__hint">Results update as you type</span>
+            </div>
+        <input type="text"
+               class="form-control index-search-input"
+               placeholder="Search by purchase title..."
+               aria-label="Search purchases by title"
+               data-ajax-filter
+               data-url="@Url.Action("Filter", "Purchases")"
+               data-target="#purchaseTableBody"
+               data-count-target="#purchaseCount"
+               data-singular="purchase"
+               data-plural="purchases"
+               data-empty-message="No purchases match your search."
+               data-column-count="6" />
         </div>
     </section>
 
@@ -47,28 +72,11 @@
                             <th>Merchant</th>
                             <th>Amount</th>
                             <th>Purchase Date</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    @foreach (var purchase in Model)
-                    {
-                        var amountSignalClass = purchase.Amount switch
-                        {
-                            >= 200m => "list-signal list-signal--danger",
-                            >= 100m => "list-signal list-signal--warn",
-                            _ => "list-signal list-signal--ok"
-                        };
-
-                        <tr>
-                            <td class="fw-semibold">
-                                <a class="index-link" asp-action="Details" asp-route-id="@purchase.Id">@purchase.Title</a>
-                            </td>
-                            <td>@(purchase.UserProfile is null ? "-" : $"{purchase.UserProfile.FirstName} {purchase.UserProfile.LastName}")</td>
-                            <td>@purchase.Merchant?.Name</td>
-                            <td><span class="@($"{amountSignalClass} list-signal--mono")">@purchase.Amount.ToString("F2") @purchase.Currency</span></td>
-                            <td>@purchase.PurchasedAt.ToString("yyyy-MM-dd")</td>
-                        </tr>
-                    }
+                    <tbody id="purchaseTableBody">
+                    @await Html.PartialAsync("_PurchaseTableRows", Model)
                     </tbody>
                 </table>
             </div>

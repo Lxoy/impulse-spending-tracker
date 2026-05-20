@@ -1,0 +1,41 @@
+@model IEnumerable<BudgetPlan>
+
+@foreach (var plan in Model)
+{
+    var coveredSpend = plan.CoveredPurchases.Sum(p => p.Amount);
+    var limitUtilization = plan.MonthlyLimit <= 0 ? -1m : coveredSpend / plan.MonthlyLimit;
+    var limitSignalClass = plan.IsActive != true
+        ? "list-signal list-signal--muted"
+        : limitUtilization > 1m
+            ? "list-signal list-signal--danger"
+            : limitUtilization >= 0.7m
+                ? "list-signal list-signal--warn"
+                : "list-signal list-signal--ok";
+
+    <tr>
+        <td class="fw-semibold">
+            <a class="index-link" asp-action="Details" asp-route-id="@plan.Id">@plan.Name</a>
+        </td>
+        <td>@(plan.UserProfile is null ? "-" : $"{plan.UserProfile.FirstName} {plan.UserProfile.LastName}")</td>
+        <td>@(plan.ValidFrom?.ToString("yyyy-MM-dd") ?? "-")</td>
+        <td>@(plan.ValidTo?.ToString("yyyy-MM-dd") ?? "-")</td>
+        <td><span class="@($"{limitSignalClass} list-signal--mono")">@plan.MonthlyLimit.ToString("F2") EUR</span></td>
+        <td>
+            @if (plan.IsActive == true)
+            {
+                <span class="list-signal list-signal--ok">Active</span>
+            }
+            else
+            {
+                <span class="list-signal list-signal--muted">Inactive</span>
+            }
+        </td>
+        <td class="text-end">
+            <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@plan.Id">Details</a>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@plan.Id">Edit</a>
+                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@plan.Id">Delete</a>
+            </div>
+        </td>
+    </tr>
+}

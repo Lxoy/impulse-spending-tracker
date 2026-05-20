@@ -1,0 +1,70 @@
+@model UserProfile
+
+@{
+    ViewData["Title"] = "Edit User Profile";
+}
+
+<div class="form-shell">
+    <nav aria-label="breadcrumb" class="form-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">User Profiles</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id">Details</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+    </nav>
+
+    <section class="form-hero mb-3">
+        <p class="form-kicker">User Profiles</p>
+        <h1 class="form-title">Edit User Profile</h1>
+        <p class="form-subtitle">Update profile values while preserving the current visual flow.</p>
+    </section>
+
+    <section class="form-surface card border-0">
+        <div class="card-body">
+            <form asp-action="Edit" method="post" class="form-grid row g-3" novalidate>
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    @await Html.PartialAsync("_DatePickerControl", Model.DateOfBirth, new ViewDataDictionary(ViewData) { { "For", nameof(Model.DateOfBirth) } })
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="MonthlyNetIncome" class="form-label"></label>
+                    <input asp-for="MonthlyNetIncome" class="form-control" />
+                    <span asp-validation-for="MonthlyNetIncome" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="RiskToleranceScore" class="form-label"></label>
+                    <input asp-for="RiskToleranceScore" class="form-control" />
+                    <span asp-validation-for="RiskToleranceScore" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 form-actions d-flex flex-wrap gap-2 pt-2">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Back to details</a>
+                    <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

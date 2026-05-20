@@ -45,16 +45,19 @@ namespace impulse_spending_tracker.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("DiscretionaryCategoryLimit")
+                    b.Property<decimal?>("DiscretionaryCategoryLimit")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<decimal>("EssentialCategoryLimit")
+                    b.Property<decimal?>("EssentialCategoryLimit")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<double>("ImpulseCapPercentage")
+                    b.Property<double?>("ImpulseCapPercentage")
                         .HasColumnType("double");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<decimal>("MonthlyLimit")
@@ -62,15 +65,16 @@ namespace impulse_spending_tracker.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("UserProfileId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ValidFrom")
+                    b.Property<DateTime?>("ValidFrom")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("ValidTo")
+                    b.Property<DateTime?>("ValidTo")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
@@ -93,18 +97,23 @@ namespace impulse_spending_tracker.Migrations
 
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
 
                     b.Property<string>("CountryCode")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsOnlineOnly")
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("IsOnlineOnly")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
 
                     b.HasKey("Id");
 
@@ -127,23 +136,29 @@ namespace impulse_spending_tracker.Migrations
 
                     b.Property<string>("Currency")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(8)
+                        .HasColumnType("varchar(8)");
 
                     b.Property<int>("Installments")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("MerchantId")
                         .HasColumnType("int");
 
                     b.Property<string>("MoodBeforePurchase")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
 
                     b.Property<int>("NeedLevel")
                         .HasColumnType("int");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<DateTime>("PurchasedAt")
                         .HasColumnType("datetime(6)");
@@ -153,7 +168,8 @@ namespace impulse_spending_tracker.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(140)
+                        .HasColumnType("varchar(140)");
 
                     b.Property<int>("TriggerType")
                         .HasColumnType("int");
@@ -190,13 +206,17 @@ namespace impulse_spending_tracker.Migrations
 
                     b.Property<string>("Channel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)");
 
                     b.Property<bool>("CheckoutCompleted")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime?>("EndedAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("ItemsAddedToCart")
                         .HasColumnType("int");
@@ -206,7 +226,8 @@ namespace impulse_spending_tracker.Migrations
 
                     b.Property<string>("Platform")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)");
 
                     b.Property<decimal>("SessionBudget")
                         .HasColumnType("decimal(65,30)");
@@ -241,11 +262,16 @@ namespace impulse_spending_tracker.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
@@ -272,11 +298,16 @@ namespace impulse_spending_tracker.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
 
                     b.Property<decimal>("MonthlyNetIncome")
                         .HasColumnType("decimal(65,30)");
@@ -306,23 +337,27 @@ namespace impulse_spending_tracker.Migrations
                     b.Property<decimal>("DesiredPrice")
                         .HasColumnType("decimal(65,30)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("IsPurchased")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("LinkUrl")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(140)
+                        .HasColumnType("varchar(140)");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
                     b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<DateTime?>("TargetPurchaseDate")
                         .HasColumnType("datetime(6)");

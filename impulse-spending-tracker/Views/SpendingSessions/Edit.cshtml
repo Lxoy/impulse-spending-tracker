@@ -1,0 +1,95 @@
+@model SpendingSession
+
+@{
+    ViewData["Title"] = "Edit Spending Session";
+}
+
+<div class="form-shell">
+    <nav aria-label="breadcrumb" class="form-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Spending Sessions</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id">Details</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+    </nav>
+
+    <section class="form-hero mb-3">
+        <p class="form-kicker">Spending Sessions</p>
+        <h1 class="form-title">Edit Spending Session</h1>
+        <p class="form-subtitle">Update session chronology and conversion metrics.</p>
+    </section>
+
+    <section class="form-surface card border-0">
+        <div class="card-body">
+            <form asp-action="Edit" method="post" class="form-grid row g-3" novalidate>
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="col-12 col-md-6 position-relative">
+                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                    {
+                        InputName = nameof(Model.UserProfileId),
+                        ValidationMessageFor = nameof(Model.UserProfileId),
+                        Label = "User",
+                        Placeholder = "Search users...",
+                        SearchUrl = Url.Action("Users", "Lookup") ?? "/lookup/users",
+                        EmptyMessage = "No users found.",
+                        SelectedId = Model.UserProfileId,
+                        SelectedText = Model.UserProfile is null ? string.Empty : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName} ({Model.UserProfile.Email})"
+                    })
+                </div>
+                <div class="col-12 col-md-6">
+                    @await Html.PartialAsync("_DatePickerControl", Model.EndedAt, new ViewDataDictionary(ViewData) { { "IncludeTime", true }, { "For", nameof(Model.EndedAt) } })
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="Platform" class="form-label"></label>
+                    <input asp-for="Platform" class="form-control" />
+                    <span asp-validation-for="Platform" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="Channel" class="form-label"></label>
+                    <input asp-for="Channel" class="form-control" />
+                    <span asp-validation-for="Channel" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label asp-for="SessionBudget" class="form-label"></label>
+                    <input asp-for="SessionBudget" class="form-control" />
+                    <span asp-validation-for="SessionBudget" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label asp-for="SpentAmount" class="form-label"></label>
+                    <input asp-for="SpentAmount" class="form-control" />
+                    <span asp-validation-for="SpentAmount" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label asp-for="ItemsViewed" class="form-label"></label>
+                    <input asp-for="ItemsViewed" class="form-control" />
+                    <span asp-validation-for="ItemsViewed" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label asp-for="ItemsAddedToCart" class="form-label"></label>
+                    <input asp-for="ItemsAddedToCart" class="form-control" />
+                    <span asp-validation-for="ItemsAddedToCart" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input asp-for="CheckoutCompleted" class="form-check-input" />
+                        <label asp-for="CheckoutCompleted" class="form-check-label"></label>
+                    </div>
+                    <span asp-validation-for="CheckoutCompleted" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 form-actions d-flex flex-wrap gap-2 pt-2">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Back to details</a>
+                    <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

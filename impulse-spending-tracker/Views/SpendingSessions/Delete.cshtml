@@ -1,0 +1,44 @@
+@model SpendingSession
+
+@{
+    ViewData["Title"] = "Delete Spending Session";
+}
+
+<div class="delete-shell">
+    <nav aria-label="breadcrumb" class="delete-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Spending Sessions</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id">Details</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Delete</li>
+        </ol>
+    </nav>
+
+    <section class="delete-hero mb-3">
+        <p class="delete-kicker">Spending Sessions</p>
+        <h1 class="delete-title">Delete Spending Session</h1>
+        <p class="delete-subtitle">Confirm deletion of this session timeline.</p>
+    </section>
+
+    <section class="delete-surface card border-0">
+        <div class="card-body">
+            <div class="alert alert-warning mb-3">This action cannot be undone.</div>
+
+            <dl class="row mb-0 delete-summary">
+                <dt class="col-sm-4">Started</dt>
+                <dd class="col-sm-8">@Model.StartedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+                <dt class="col-sm-4">Platform</dt>
+                <dd class="col-sm-8">@Model.Platform</dd>
+                <dt class="col-sm-4">Spent</dt>
+                <dd class="col-sm-8">@Model.SpentAmount.ToString("F2") EUR</dd>
+            </dl>
+
+            <form asp-action="Delete" method="post" class="delete-actions d-flex flex-wrap gap-2 mt-3">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">Delete session</button>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Back to details</a>
+                <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
+            </form>
+        </div>
+    </section>
+</div>

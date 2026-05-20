@@ -1,0 +1,119 @@
+@model Purchase
+
+@{
+    ViewData["Title"] = "Create Purchase";
+}
+
+<div class="form-shell">
+    <nav aria-label="breadcrumb" class="form-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Purchases</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </ol>
+    </nav>
+
+    <section class="form-hero mb-3">
+        <p class="form-kicker">Purchases</p>
+        <h1 class="form-title">Create Purchase</h1>
+        <p class="form-subtitle">Log a spending event with trigger and context values.</p>
+    </section>
+
+    <section class="form-surface card border-0">
+        <div class="card-body">
+            <form asp-action="Create" method="post" class="form-grid row g-3" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="col-12 col-md-6 position-relative">
+                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                    {
+                        InputName = nameof(Model.UserProfileId),
+                        ValidationMessageFor = nameof(Model.UserProfileId),
+                        Label = "User",
+                        Placeholder = "Search users...",
+                        SearchUrl = Url.Action("Users", "Lookup") ?? "/lookup/users",
+                        EmptyMessage = "No users found."
+                    })
+                </div>
+                <div class="col-12 col-md-6 position-relative">
+                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                    {
+                        InputName = nameof(Model.MerchantId),
+                        ValidationMessageFor = nameof(Model.MerchantId),
+                        Label = "Merchant",
+                        Placeholder = "Search merchants...",
+                        SearchUrl = Url.Action("Merchants", "Lookup") ?? "/lookup/merchants",
+                        EmptyMessage = "No merchants found."
+                    })
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="SpendingSessionId" class="form-label"></label>
+                    <select asp-for="SpendingSessionId" asp-items="@ViewBag.SpendingSessionId" class="form-select"></select>
+                    <span asp-validation-for="SpendingSessionId" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="BudgetPlanId" class="form-label"></label>
+                    <select asp-for="BudgetPlanId" asp-items="@ViewBag.BudgetPlanId" class="form-select"></select>
+                    <span asp-validation-for="BudgetPlanId" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="WishlistItemId" class="form-label"></label>
+                    <select asp-for="WishlistItemId" asp-items="@ViewBag.WishlistItemId" class="form-select"></select>
+                    <span asp-validation-for="WishlistItemId" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label asp-for="Amount" class="form-label"></label>
+                    <input asp-for="Amount" class="form-control" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label asp-for="Currency" class="form-label"></label>
+                    <input asp-for="Currency" class="form-control" />
+                    <span asp-validation-for="Currency" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-4">
+                    @await Html.PartialAsync("_DatePickerControl", Model.PurchasedAt, new ViewDataDictionary(ViewData) { { "IncludeTime", true }, { "For", nameof(Model.PurchasedAt) } })
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="MoodBeforePurchase" class="form-label"></label>
+                    <input asp-for="MoodBeforePurchase" class="form-control" />
+                    <span asp-validation-for="MoodBeforePurchase" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label asp-for="NeedLevel" class="form-label"></label>
+                    <input asp-for="NeedLevel" class="form-control" />
+                    <span asp-validation-for="NeedLevel" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label asp-for="Installments" class="form-label"></label>
+                    <input asp-for="Installments" class="form-control" />
+                    <span asp-validation-for="Installments" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label asp-for="TriggerType" class="form-label"></label>
+                    <select asp-for="TriggerType" asp-items="Html.GetEnumSelectList<ImpulseTriggerType>()" class="form-select"></select>
+                    <span asp-validation-for="TriggerType" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Notes" class="form-label"></label>
+                    <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 form-actions d-flex flex-wrap gap-2 pt-2">
+                    <button type="submit" class="btn btn-primary">Create purchase</button>
+                    <a asp-action="Index" class="btn btn-outline-primary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

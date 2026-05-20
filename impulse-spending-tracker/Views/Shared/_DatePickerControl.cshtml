@@ -1,0 +1,60 @@
+@{
+    // Allow callers to specify the target field name via ViewData["For"]
+    var explicitFor = ViewData["For"] as string;
+
+    var inputName = explicitFor;
+    if (string.IsNullOrEmpty(inputName))
+    {
+        inputName = ViewData.ModelMetadata?.Name;
+    }
+
+    var displayName = ViewData["Label"] as string ?? ViewData.ModelMetadata?.DisplayName ?? inputName;
+    var isRequired = (ViewData.ModelMetadata != null) ? ViewData.ModelMetadata.IsRequired : false;
+    var value = ViewData.Model;
+    var includeTime = (bool?)ViewData["IncludeTime"] ?? false;
+    var validationFrom = ViewData["ValidationFrom"] as string;
+    var validationMessage = ViewData["ValidationMessage"] as string;
+
+    // If no DisplayName was provided, humanize the property name
+    if (!string.IsNullOrEmpty(inputName) && string.Equals(displayName, inputName, StringComparison.Ordinal))
+    {
+        displayName = System.Text.RegularExpressions.Regex.Replace(inputName, "[_\\-]+", " ");
+        displayName = System.Text.RegularExpressions.Regex.Replace(displayName, "([a-z0-9])([A-Z])", "$1 $2");
+        if (!string.IsNullOrEmpty(displayName))
+        {
+            displayName = char.ToUpper(displayName[0]) + (displayName.Length > 1 ? displayName.Substring(1) : "");
+        }
+    }
+}
+
+<div class="form-group date-picker-group" data-date-picker data-include-time="@includeTime">
+    <label class="form-label" for="@(inputName + "Display")">@displayName</label>
+    <div class="input-group position-relative">
+        <input 
+            type="text"
+            id="@(inputName + "Display")"
+            class="form-control date-picker-input" 
+            placeholder="@(includeTime ? "dd.mm.yyyy hh:mm" : "dd.mm.yyyy")"
+            autocomplete="off"
+            @if (isRequired) { <text>required</text> }
+            data-date-input />
+        <button type="button" class="btn btn-outline-secondary date-picker-toggle" aria-label="Open calendar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+        </button>
+        <input 
+            type="hidden" 
+            name="@inputName"
+            id="@inputName"
+            value="@(value is DateTime dt && dt > DateTime.MinValue ? dt.ToString("s") : String.Empty)"
+            class="date-picker-value"
+            data-hidden-value
+            @(validationFrom is string && !string.IsNullOrEmpty(validationMessage) ? $"data-val=\"true\" data-val-daterange=\"{validationMessage}\" data-val-daterange-from=\"{validationFrom}\" data-val-daterange-to=\"{inputName}\"" : String.Empty) />
+    </div>
+    <div class="date-picker-calendar" data-calendar hidden></div>
+    @Html.ValidationMessage(inputName, string.Empty, new { @class = "text-danger" })
+</div>

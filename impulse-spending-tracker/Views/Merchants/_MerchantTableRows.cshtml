@@ -1,0 +1,24 @@
+@model IEnumerable<Merchant>
+
+@foreach (var merchant in Model)
+{
+    var channelSignalClass = merchant.IsOnlineOnly == true
+        ? "list-signal list-signal--info"
+        : "list-signal list-signal--brand";
+
+    <tr>
+        <td class="fw-semibold">
+            <a class="index-link" asp-action="Details" asp-route-id="@merchant.Id">@merchant.Name</a>
+        </td>
+        <td>@merchant.Category</td>
+        <td>@merchant.CountryCode</td>
+        <td><span class="@channelSignalClass">@(merchant.IsOnlineOnly == true ? "Online" : "Online + Store")</span></td>
+        <td class="text-end">
+            <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@merchant.Id">Details</a>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@merchant.Id">Edit</a>
+                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@merchant.Id">Delete</a>
+            </div>
+        </td>
+    </tr>
+}

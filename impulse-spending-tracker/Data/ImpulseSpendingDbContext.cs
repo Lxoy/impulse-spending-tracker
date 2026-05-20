@@ -74,6 +74,15 @@ namespace impulse_spending_tracker.Data
                 .HasMany(p => p.Tags)
                 .WithMany(t => t.Purchases)
                 .UsingEntity("PurchaseTags");
+
+            // Global query filters to hide soft-deleted records
+            modelBuilder.Entity<UserProfile>().HasQueryFilter(u => !u.IsDeleted);
+            modelBuilder.Entity<Purchase>().HasQueryFilter(p => !p.IsDeleted);
+            modelBuilder.Entity<Merchant>().HasQueryFilter(m => !m.IsDeleted);
+            modelBuilder.Entity<SpendingSession>().HasQueryFilter(s => !s.IsDeleted);
+            modelBuilder.Entity<BudgetPlan>().HasQueryFilter(b => !b.IsDeleted);
+            modelBuilder.Entity<WishlistItem>().HasQueryFilter(w => !w.IsDeleted);
+            modelBuilder.Entity<Tag>().HasQueryFilter(t => !t.IsDeleted);
         }
     }
 }

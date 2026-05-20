@@ -1,0 +1,27 @@
+@model IEnumerable<UserProfile>
+
+@foreach (var user in Model)
+{
+    var riskSignalClass = user.RiskToleranceScore switch
+    {
+        >= 8 => "list-signal list-signal--danger",
+        >= 5 => "list-signal list-signal--warn",
+        _ => "list-signal list-signal--ok"
+    };
+
+    <tr>
+        <td class="fw-semibold">
+            <a class="index-link" asp-action="Details" asp-route-id="@user.Id">@user.FirstName @user.LastName</a>
+        </td>
+        <td>@user.Email</td>
+        <td><span class="@riskSignalClass">@user.RiskToleranceScore/10</span></td>
+        <td>@user.CreatedAt.ToString("yyyy-MM-dd")</td>
+        <td class="text-end">
+            <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@user.Id">Details</a>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@user.Id">Delete</a>
+            </div>
+        </td>
+    </tr>
+}

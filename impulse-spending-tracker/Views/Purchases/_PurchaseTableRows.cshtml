@@ -1,0 +1,28 @@
+@model IEnumerable<Purchase>
+
+@foreach (var purchase in Model)
+{
+    var amountSignalClass = purchase.Amount switch
+    {
+        >= 200m => "list-signal list-signal--danger",
+        >= 100m => "list-signal list-signal--warn",
+        _ => "list-signal list-signal--ok"
+    };
+
+    <tr>
+        <td class="fw-semibold">
+            <a class="index-link" asp-action="Details" asp-route-id="@purchase.Id">@purchase.Title</a>
+        </td>
+        <td>@(purchase.UserProfile is null ? "-" : $"{purchase.UserProfile.FirstName} {purchase.UserProfile.LastName}")</td>
+        <td>@purchase.Merchant?.Name</td>
+        <td><span class="@($"{amountSignalClass} list-signal--mono")">@purchase.Amount.ToString("F2") @purchase.Currency</span></td>
+        <td>@purchase.PurchasedAt.ToString("yyyy-MM-dd")</td>
+        <td class="text-end">
+            <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@purchase.Id">Details</a>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@purchase.Id">Edit</a>
+                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@purchase.Id">Delete</a>
+            </div>
+        </td>
+    </tr>
+}

@@ -15,13 +15,38 @@
     </nav>
 
     <section class="index-hero mb-4">
-        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-            <div>
+        <div class="index-hero__grid">
+            <div class="index-hero__copy">
                 <p class="index-kicker mb-2">People layer</p>
                 <h1 class="display-6 mb-2">User Profiles</h1>
                 <p class="text-muted mb-0">Overview of all users from the EF-backed repository source.</p>
             </div>
-            <span class="index-count-chip">@Model.Count users</span>
+            <div class="index-hero__actions">
+                <span class="index-count-chip" id="userProfileCount" data-singular="user" data-plural="users">@Model.Count users</span>
+                <a class="btn btn-primary" asp-action="Create">Create profile</a>
+            </div>
+        </div>
+
+        <div class="index-search-panel">
+            <div class="index-search-panel__header">
+                <div>
+                    <p class="index-search-panel__eyebrow mb-1">Live filter</p>
+                    <p class="index-search-panel__title mb-0">Search by first or last name</p>
+                </div>
+                <span class="index-search-panel__hint">Results update as you type</span>
+            </div>
+        <input type="text"
+               class="form-control index-search-input"
+               placeholder="Search by first or last name..."
+               aria-label="Search user profiles by name"
+               data-ajax-filter
+               data-url="@Url.Action("Filter", "UserProfiles")"
+               data-target="#userProfileTableBody"
+               data-count-target="#userProfileCount"
+               data-singular="user"
+               data-plural="users"
+               data-empty-message="No user profiles match your search."
+               data-column-count="5" />
         </div>
     </section>
 
@@ -46,27 +71,11 @@
                             <th>Email</th>
                             <th>Risk score</th>
                             <th>Created</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    @foreach (var user in Model)
-                    {
-                        var riskSignalClass = user.RiskToleranceScore switch
-                        {
-                            >= 8 => "list-signal list-signal--danger",
-                            >= 5 => "list-signal list-signal--warn",
-                            _ => "list-signal list-signal--ok"
-                        };
-
-                        <tr>
-                            <td class="fw-semibold">
-                                <a class="index-link" asp-action="Details" asp-route-id="@user.Id">@user.FirstName @user.LastName</a>
-                            </td>
-                            <td>@user.Email</td>
-                            <td><span class="@riskSignalClass">@user.RiskToleranceScore/10</span></td>
-                            <td>@user.CreatedAt.ToString("yyyy-MM-dd")</td>
-                        </tr>
-                    }
+                    <tbody id="userProfileTableBody">
+                    @await Html.PartialAsync("_UserProfileTableRows", Model)
                     </tbody>
                 </table>
             </div>

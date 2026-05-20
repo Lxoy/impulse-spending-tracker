@@ -28,5 +28,24 @@ namespace impulse_spending_tracker.Repositories
                 .Include(t => t.Purchases)
                 .SingleOrDefault(t => t.Id == id);
         }
+
+        public void Create(Tag tag)
+        {
+            _dbContext.Tags.Add(tag);
+            _dbContext.SaveChanges();
+        }
+
+        public void Update(Tag tag)
+        {
+            _dbContext.Tags.Update(tag);
+            _dbContext.SaveChanges();
+        }
+
+        public void Delete(Tag tag)
+        {
+            tag.IsDeleted = true;
+            _dbContext.Tags.Update(tag);
+            _dbContext.SaveChanges();
+        }
     }
 }
