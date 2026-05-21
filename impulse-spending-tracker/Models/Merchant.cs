@@ -18,7 +18,7 @@ namespace impulse_spending_tracker.Models
         [Required(ErrorMessage = "Country code is required.")]
         [RegularExpression("^[A-Za-z]{2}$", ErrorMessage = "Country code must contain exactly 2 letters.")]
         public string CountryCode { get; set; } = string.Empty;
-        public bool? IsOnlineOnly { get; set; }
+        public bool IsOnlineOnly { get; set; }
 
         [Range(1, 90, ErrorMessage = "Average delivery days must be between 1 and 90 when provided.")]
         public int? AverageDeliveryDays { get; set; }

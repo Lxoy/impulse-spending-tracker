@@ -22,7 +22,7 @@
 
     <section class="form-surface card border-0">
         <div class="card-body">
-            <form asp-action="Edit" method="post" class="form-grid row g-3" novalidate>
+            <form asp-action="Edit" method="post" class="form-grid row g-3" novalidate data-purchase-related-options-url="@Url.Action("DependentOptions", "Purchases")">
                 <input type="hidden" asp-for="Id" />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -69,17 +69,17 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="Title" class="form-label"></label>
-                    <input asp-for="Title" class="form-control" />
+                    <input asp-for="Title" class="form-control" placeholder="e.g., Coffee at the corner cafe" />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-4">
                     <label asp-for="Amount" class="form-label"></label>
-                    <input asp-for="Amount" class="form-control" />
+                    <input asp-for="Amount" class="form-control" placeholder="e.g., 4.99" />
                     <span asp-validation-for="Amount" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-4">
                     <label asp-for="Currency" class="form-label"></label>
-                    <input asp-for="Currency" class="form-control" />
+                    <input asp-for="Currency" class="form-control" placeholder="e.g., EUR" />
                     <span asp-validation-for="Currency" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-4">
@@ -87,17 +87,17 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="MoodBeforePurchase" class="form-label"></label>
-                    <input asp-for="MoodBeforePurchase" class="form-control" />
+                    <input asp-for="MoodBeforePurchase" class="form-control" placeholder="e.g., Tempted / Neutral" />
                     <span asp-validation-for="MoodBeforePurchase" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-3">
                     <label asp-for="NeedLevel" class="form-label"></label>
-                    <input asp-for="NeedLevel" class="form-control" />
+                    <input asp-for="NeedLevel" class="form-control" placeholder="1-10" />
                     <span asp-validation-for="NeedLevel" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-3">
                     <label asp-for="Installments" class="form-label"></label>
-                    <input asp-for="Installments" class="form-control" />
+                    <input asp-for="Installments" class="form-control" placeholder="e.g., 1" />
                     <span asp-validation-for="Installments" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">

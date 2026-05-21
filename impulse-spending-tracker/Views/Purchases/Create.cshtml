@@ -21,7 +21,7 @@
 
     <section class="form-surface card border-0">
         <div class="card-body">
-            <form asp-action="Create" method="post" class="form-grid row g-3" novalidate>
+            <form asp-action="Create" method="post" class="form-grid row g-3" novalidate data-purchase-related-options-url="@Url.Action("DependentOptions", "Purchases")">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="col-12 col-md-6 position-relative">
@@ -48,32 +48,38 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="SpendingSessionId" class="form-label"></label>
-                    <select asp-for="SpendingSessionId" asp-items="@ViewBag.SpendingSessionId" class="form-select"></select>
+                    <select asp-for="SpendingSessionId" asp-items="@ViewBag.SpendingSessionId" class="form-select">
+                        <option value="">Select a spending session...</option>
+                    </select>
                     <span asp-validation-for="SpendingSessionId" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="BudgetPlanId" class="form-label"></label>
-                    <select asp-for="BudgetPlanId" asp-items="@ViewBag.BudgetPlanId" class="form-select"></select>
+                    <select asp-for="BudgetPlanId" asp-items="@ViewBag.BudgetPlanId" class="form-select">
+                        <option value="">Select a budget plan...</option>
+                    </select>
                     <span asp-validation-for="BudgetPlanId" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="WishlistItemId" class="form-label"></label>
-                    <select asp-for="WishlistItemId" asp-items="@ViewBag.WishlistItemId" class="form-select"></select>
+                    <select asp-for="WishlistItemId" asp-items="@ViewBag.WishlistItemId" class="form-select">
+                        <option value="">Select a wishlist item (optional)</option>
+                    </select>
                     <span asp-validation-for="WishlistItemId" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="Title" class="form-label"></label>
-                    <input asp-for="Title" class="form-control" />
+                    <input asp-for="Title" class="form-control" placeholder="e.g., Coffee at the corner cafe" />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-4">
                     <label asp-for="Amount" class="form-label"></label>
-                    <input asp-for="Amount" class="form-control" />
+                    <input asp-for="Amount" class="form-control" placeholder="e.g., 4.99" />
                     <span asp-validation-for="Amount" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-4">
                     <label asp-for="Currency" class="form-label"></label>
-                    <input asp-for="Currency" class="form-control" />
+                    <input asp-for="Currency" class="form-control" placeholder="e.g., EUR" />
                     <span asp-validation-for="Currency" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-4">
@@ -81,27 +87,29 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="MoodBeforePurchase" class="form-label"></label>
-                    <input asp-for="MoodBeforePurchase" class="form-control" />
+                    <input asp-for="MoodBeforePurchase" class="form-control" placeholder="e.g., Tempted / Neutral" />
                     <span asp-validation-for="MoodBeforePurchase" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-3">
                     <label asp-for="NeedLevel" class="form-label"></label>
-                    <input asp-for="NeedLevel" class="form-control" />
+                    <input asp-for="NeedLevel" class="form-control" placeholder="1-10" />
                     <span asp-validation-for="NeedLevel" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-3">
                     <label asp-for="Installments" class="form-label"></label>
-                    <input asp-for="Installments" class="form-control" />
+                    <input asp-for="Installments" class="form-control" placeholder="e.g., 1" />
                     <span asp-validation-for="Installments" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="TriggerType" class="form-label"></label>
-                    <select asp-for="TriggerType" asp-items="Html.GetEnumSelectList<ImpulseTriggerType>()" class="form-select"></select>
+                    <select asp-for="TriggerType" asp-items="Html.GetEnumSelectList<ImpulseTriggerType>()" class="form-select">
+                        <option value="">Choose trigger type...</option>
+                    </select>
                     <span asp-validation-for="TriggerType" class="text-danger"></span>
                 </div>
                 <div class="col-12">
                     <label asp-for="Notes" class="form-label"></label>
-                    <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                    <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Notes about the purchase (optional)"></textarea>
                     <span asp-validation-for="Notes" class="text-danger"></span>
                 </div>
 

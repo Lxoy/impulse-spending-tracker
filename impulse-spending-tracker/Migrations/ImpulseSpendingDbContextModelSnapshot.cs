@@ -54,7 +54,7 @@ namespace impulse_spending_tracker.Migrations
                     b.Property<double?>("ImpulseCapPercentage")
                         .HasColumnType("double");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsDeleted")
@@ -107,7 +107,7 @@ namespace impulse_spending_tracker.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool?>("IsOnlineOnly")
+                    b.Property<bool>("IsOnlineOnly")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")

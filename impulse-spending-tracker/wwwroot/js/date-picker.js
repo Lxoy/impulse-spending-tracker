@@ -231,7 +231,6 @@ export function initializeDatePicker(pickerElement) {
         
         hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
         displayInput.classList.remove('is-invalid');
-        displayInput.classList.add('is-valid');
         
         calendarContainer.setAttribute('hidden', '');
     }
@@ -267,7 +266,6 @@ export function initializeDatePicker(pickerElement) {
                         updateDisplay(parsed);
                     } else {
                         displayInput.classList.add('is-invalid');
-                        displayInput.classList.remove('is-valid');
                     }
                 }
             }
@@ -280,14 +278,13 @@ export function initializeDatePicker(pickerElement) {
             currentDate = parsed;
             hiddenInput.value = toISOString(parsed);
             displayInput.classList.remove('is-invalid');
-            displayInput.classList.add('is-valid');
         } else if (displayInput.value.trim() !== '') {
             displayInput.classList.add('is-invalid');
-            displayInput.classList.remove('is-valid');
         } else {
             displayInput.classList.remove('is-invalid');
-            displayInput.classList.remove('is-valid');
         }
+
+        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
     });
     
     document.addEventListener('click', (e) => {

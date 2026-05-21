@@ -103,6 +103,9 @@ namespace impulse_spending_tracker.Controllers
             }
 
             session.StartedAt = DateTime.Now;
+            session.SpentAmount = 0m;
+            session.ItemsViewed = 0;
+            session.ItemsAddedToCart = 0;
             _sessionRepository.Create(session);
             return RedirectToAction(nameof(Index));
         }
@@ -138,6 +141,9 @@ namespace impulse_spending_tracker.Controllers
             }
 
             session.StartedAt = existingSession.StartedAt;
+            session.SpentAmount = existingSession.SpentAmount;
+            session.ItemsViewed = existingSession.ItemsViewed;
+            session.ItemsAddedToCart = existingSession.ItemsAddedToCart;
             _sessionRepository.Update(session);
             return RedirectToAction(nameof(Details), new { id = session.Id });
         }

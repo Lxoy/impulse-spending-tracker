@@ -39,7 +39,7 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="Name" class="form-label"></label>
-                    <input asp-for="Name" class="form-control" />
+                    <input asp-for="Name" class="form-control" placeholder="e.g., Monthly groceries" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
@@ -50,27 +50,27 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="MonthlyLimit" class="form-label"></label>
-                    <input asp-for="MonthlyLimit" class="form-control" />
+                    <input asp-for="MonthlyLimit" class="form-control" placeholder="e.g., 500.00" />
                     <span asp-validation-for="MonthlyLimit" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="ImpulseCapPercentage" class="form-label"></label>
-                    <input asp-for="ImpulseCapPercentage" class="form-control" />
+                    <input asp-for="ImpulseCapPercentage" class="form-control" placeholder="e.g., 15" />
                     <span asp-validation-for="ImpulseCapPercentage" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="EssentialCategoryLimit" class="form-label"></label>
-                    <input asp-for="EssentialCategoryLimit" class="form-control" />
+                    <input asp-for="EssentialCategoryLimit" class="form-control" placeholder="e.g., 300.00" />
                     <span asp-validation-for="EssentialCategoryLimit" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="DiscretionaryCategoryLimit" class="form-label"></label>
-                    <input asp-for="DiscretionaryCategoryLimit" class="form-control" />
+                    <input asp-for="DiscretionaryCategoryLimit" class="form-control" placeholder="e.g., 200.00" />
                     <span asp-validation-for="DiscretionaryCategoryLimit" class="text-danger"></span>
                 </div>
                 <div class="col-12">
                     <div class="form-check">
-                        <input asp-for="IsActive" class="form-check-input" />
+                        <input asp-for="IsActive" type="checkbox" class="form-check-input" />
                         <label asp-for="IsActive" class="form-check-label"></label>
                     </div>
                     <span asp-validation-for="IsActive" class="text-danger"></span>

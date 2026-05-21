@@ -26,27 +26,27 @@
 
                 <div class="col-12 col-md-6">
                     <label asp-for="Name" class="form-label"></label>
-                    <input asp-for="Name" class="form-control" />
+                    <input asp-for="Name" class="form-control" placeholder="e.g., Amazon" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="Category" class="form-label"></label>
-                    <input asp-for="Category" class="form-control" />
+                    <input asp-for="Category" class="form-control" placeholder="e.g., Electronics" />
                     <span asp-validation-for="Category" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="CountryCode" class="form-label"></label>
-                    <input asp-for="CountryCode" class="form-control" />
+                    <input asp-for="CountryCode" class="form-control" placeholder="e.g., DE" />
                     <span asp-validation-for="CountryCode" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="AverageDeliveryDays" class="form-label"></label>
-                    <input asp-for="AverageDeliveryDays" class="form-control" />
+                    <input asp-for="AverageDeliveryDays" class="form-control" placeholder="e.g., 3" />
                     <span asp-validation-for="AverageDeliveryDays" class="text-danger"></span>
                 </div>
                 <div class="col-12">
                     <div class="form-check">
-                        <input asp-for="IsOnlineOnly" class="form-check-input" />
+                        <input asp-for="IsOnlineOnly" type="checkbox" class="form-check-input" />
                         <label asp-for="IsOnlineOnly" class="form-check-label"></label>
                     </div>
                     <span asp-validation-for="IsOnlineOnly" class="text-danger"></span>

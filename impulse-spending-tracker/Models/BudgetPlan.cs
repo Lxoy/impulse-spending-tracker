@@ -33,7 +33,7 @@ namespace impulse_spending_tracker.Models
 
         [Range(0, 1000000, ErrorMessage = "Discretionary category limit cannot be negative.")]
         public decimal? DiscretionaryCategoryLimit { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
 
         public virtual UserProfile? UserProfile { get; set; }
         public virtual ICollection<Purchase> CoveredPurchases { get; set; } = new List<Purchase>();

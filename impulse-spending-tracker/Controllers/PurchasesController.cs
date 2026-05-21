@@ -43,6 +43,17 @@ namespace impulse_spending_tracker.Controllers
             return View(purchases);
         }
 
+        private static List<SelectListItem> CreateOptionalSelectList(IEnumerable<SelectListItem> items, string placeholder)
+        {
+            var list = new List<SelectListItem>
+            {
+                new SelectListItem { Value = string.Empty, Text = placeholder }
+            };
+
+            list.AddRange(items);
+            return list;
+        }
+
         [HttpGet("filter")]
         public IActionResult Filter(string query)
         {
@@ -57,6 +68,93 @@ namespace impulse_spending_tracker.Controllers
             return PartialView("_PurchaseTableRows", purchases);
         }
 
+        private IReadOnlyList<SelectListItem> BuildSpendingSessionOptions(int? userProfileId)
+        {
+            if (!userProfileId.HasValue || userProfileId.Value <= 0)
+            {
+                return Array.Empty<SelectListItem>();
+            }
+
+            return _spendingSessionRepository.GetAll()
+                .Where(s => s.UserProfileId == userProfileId.Value)
+                .OrderByDescending(s => s.StartedAt)
+                .Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = $"Session on {s.StartedAt:yyyy-MM-dd} (ID: {s.Id})"
+                })
+                .ToList();
+        }
+
+        private IReadOnlyList<SelectListItem> BuildBudgetPlanOptions(int? userProfileId)
+        {
+            if (!userProfileId.HasValue || userProfileId.Value <= 0)
+            {
+                return Array.Empty<SelectListItem>();
+            }
+
+            return _budgetPlanRepository.GetAll()
+                .Where(b => b.UserProfileId == userProfileId.Value)
+                .OrderBy(b => b.Name)
+                .Select(b => new SelectListItem
+                {
+                    Value = b.Id.ToString(),
+                    Text = $"{b.Name} (ID: {b.Id})"
+                })
+                .ToList();
+        }
+
+        private IReadOnlyList<SelectListItem> BuildWishlistItemOptions(int? userProfileId)
+        {
+            if (!userProfileId.HasValue || userProfileId.Value <= 0)
+            {
+                return Array.Empty<SelectListItem>();
+            }
+
+            return _wishlistItemRepository.GetAll()
+                .Where(w => w.UserProfileId == userProfileId.Value)
+                .OrderBy(w => w.Name)
+                .Select(w => new SelectListItem
+                {
+                    Value = w.Id.ToString(),
+                    Text = $"{w.Name} (ID: {w.Id})"
+                })
+                .ToList();
+        }
+
+        [HttpGet("dependent-options")]
+        public IActionResult DependentOptions(int userProfileId)
+        {
+            var spendingSessions = BuildSpendingSessionOptions(userProfileId)
+                .Select(option => new { id = option.Value, text = option.Text })
+                .ToList();
+
+            var budgetPlans = BuildBudgetPlanOptions(userProfileId)
+                .Select(option => new { id = option.Value, text = option.Text })
+                .ToList();
+
+            var wishlistItems = BuildWishlistItemOptions(userProfileId)
+                .Select(option => new { id = option.Value, text = option.Text })
+                .ToList();
+
+            var wishlistPrices = _wishlistItemRepository.GetAll()
+                .Where(w => w.UserProfileId == userProfileId)
+                .Select(w => new
+                {
+                    id = w.Id.ToString(),
+                    currentPrice = w.CurrentPrice
+                })
+                .ToList();
+
+            return Json(new
+            {
+                spendingSessions,
+                budgetPlans,
+                wishlistItems,
+                wishlistPrices
+            });
+        }
+
         [HttpGet("{id:int}")]
         public IActionResult Details(int id)
         {
@@ -69,7 +167,7 @@ namespace impulse_spending_tracker.Controllers
             return View(purchase);
         }
 
-        private void LoadDropdownData()
+        private void LoadDropdownData(int? userProfileId = null)
         {
             var users = _userProfileRepository.GetAll()
                 .OrderBy(u => u.LastName)
@@ -90,47 +188,12 @@ namespace impulse_spending_tracker.Controllers
                 })
                 .ToList();
 
-            var sessions = _spendingSessionRepository.GetAll()
-                .OrderByDescending(s => s.StartedAt)
-                .Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = $"Session on {s.StartedAt:yyyy-MM-dd} (ID: {s.Id})"
-                })
-                .ToList();
-
-            var budgetPlans = _budgetPlanRepository.GetAll()
-                .OrderBy(b => b.Name)
-                .Select(b => new SelectListItem
-                {
-                    Value = b.Id.ToString(),
-                    Text = $"{b.Name} (ID: {b.Id})"
-                })
-                .ToList();
-
-            var wishlistItems = _wishlistItemRepository.GetAll()
-                .OrderBy(w => w.Name)
-                .Select(w => new SelectListItem
-                {
-                    Value = w.Id.ToString(),
-                    Text = $"{w.Name} (ID: {w.Id})"
-                })
-                .ToList();
-
             ViewBag.UserProfileId = users;
             ViewBag.MerchantId = merchants;
-            
-            var sessionsList = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select (Optional) --" } };
-            sessionsList.AddRange(sessions);
-            ViewBag.SpendingSessionId = sessionsList;
-            
-            var budgetPlansList = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select (Optional) --" } };
-            budgetPlansList.AddRange(budgetPlans);
-            ViewBag.BudgetPlanId = budgetPlansList;
-            
-            var wishlistItemsList = new List<SelectListItem> { new SelectListItem { Value = "", Text = "-- Select (Optional) --" } };
-            wishlistItemsList.AddRange(wishlistItems);
-            ViewBag.WishlistItemId = wishlistItemsList;
+
+            ViewBag.SpendingSessionId = CreateOptionalSelectList(BuildSpendingSessionOptions(userProfileId), "-- Select (Optional) --");
+            ViewBag.BudgetPlanId = CreateOptionalSelectList(BuildBudgetPlanOptions(userProfileId), "-- Select (Optional) --");
+            ViewBag.WishlistItemId = CreateOptionalSelectList(BuildWishlistItemOptions(userProfileId), "-- Select (Optional) --");
         }
 
         private void PopulateSelectedEntities(Models.Purchase purchase)
@@ -146,6 +209,43 @@ namespace impulse_spending_tracker.Controllers
             }
         }
 
+        private bool ValidateUserScopedSelections(Models.Purchase purchase)
+        {
+            var isValid = true;
+
+            if (purchase.SpendingSessionId.HasValue)
+            {
+                var session = _spendingSessionRepository.GetById(purchase.SpendingSessionId.Value);
+                if (session is null || session.UserProfileId != purchase.UserProfileId)
+                {
+                    ModelState.AddModelError(nameof(Models.Purchase.SpendingSessionId), "Select a spending session that belongs to the selected user.");
+                    isValid = false;
+                }
+            }
+
+            if (purchase.BudgetPlanId.HasValue)
+            {
+                var budgetPlan = _budgetPlanRepository.GetById(purchase.BudgetPlanId.Value);
+                if (budgetPlan is null || budgetPlan.UserProfileId != purchase.UserProfileId)
+                {
+                    ModelState.AddModelError(nameof(Models.Purchase.BudgetPlanId), "Select a budget plan that belongs to the selected user.");
+                    isValid = false;
+                }
+            }
+
+            if (purchase.WishlistItemId.HasValue)
+            {
+                var wishlistItem = _wishlistItemRepository.GetById(purchase.WishlistItemId.Value);
+                if (wishlistItem is null || wishlistItem.UserProfileId != purchase.UserProfileId)
+                {
+                    ModelState.AddModelError(nameof(Models.Purchase.WishlistItemId), "Select a wishlist item that belongs to the selected user.");
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
         [HttpGet("create")]
         public IActionResult Create()
         {
@@ -157,9 +257,9 @@ namespace impulse_spending_tracker.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Models.Purchase purchase)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !ValidateUserScopedSelections(purchase))
             {
-                LoadDropdownData();
+                LoadDropdownData(purchase.UserProfileId > 0 ? purchase.UserProfileId : null);
                 PopulateSelectedEntities(purchase);
                 return View(purchase);
             }
@@ -177,7 +277,7 @@ namespace impulse_spending_tracker.Controllers
                 return NotFound();
             }
 
-            LoadDropdownData();
+            LoadDropdownData(purchase.UserProfileId);
             return View(purchase);
         }
 
@@ -185,9 +285,9 @@ namespace impulse_spending_tracker.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Models.Purchase purchase)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !ValidateUserScopedSelections(purchase))
             {
-                LoadDropdownData();
+                LoadDropdownData(purchase.UserProfileId > 0 ? purchase.UserProfileId : null);
                 PopulateSelectedEntities(purchase);
                 return View(purchase);
             }

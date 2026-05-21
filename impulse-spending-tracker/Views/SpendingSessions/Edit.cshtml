@@ -44,33 +44,23 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="Platform" class="form-label"></label>
-                    <input asp-for="Platform" class="form-control" />
+                    <input asp-for="Platform" class="form-control" placeholder="e.g., Web" />
                     <span asp-validation-for="Platform" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="Channel" class="form-label"></label>
-                    <input asp-for="Channel" class="form-control" />
+                    <input asp-for="Channel" class="form-control" placeholder="e.g., Browser / Mobile app" />
                     <span asp-validation-for="Channel" class="text-danger"></span>
                 </div>
-                <div class="col-12 col-md-3">
+                <div class="col-12 col-md-6">
                     <label asp-for="SessionBudget" class="form-label"></label>
-                    <input asp-for="SessionBudget" class="form-control" />
+                    <input asp-for="SessionBudget" class="form-control" placeholder="e.g., 100.00" />
                     <span asp-validation-for="SessionBudget" class="text-danger"></span>
                 </div>
-                <div class="col-12 col-md-3">
-                    <label asp-for="SpentAmount" class="form-label"></label>
-                    <input asp-for="SpentAmount" class="form-control" />
-                    <span asp-validation-for="SpentAmount" class="text-danger"></span>
-                </div>
-                <div class="col-12 col-md-3">
-                    <label asp-for="ItemsViewed" class="form-label"></label>
-                    <input asp-for="ItemsViewed" class="form-control" />
-                    <span asp-validation-for="ItemsViewed" class="text-danger"></span>
-                </div>
-                <div class="col-12 col-md-3">
-                    <label asp-for="ItemsAddedToCart" class="form-label"></label>
-                    <input asp-for="ItemsAddedToCart" class="form-control" />
-                    <span asp-validation-for="ItemsAddedToCart" class="text-danger"></span>
+                <div class="col-12">
+                    <div class="alert alert-info mb-0">
+                        Spending metrics are read from linked purchase data and are not edited manually here.
+                    </div>
                 </div>
                 <div class="col-12">
                     <div class="form-check">

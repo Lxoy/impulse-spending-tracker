@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		initializeAutocompleteDropdown(dropdown);
 	});
 
+	document.querySelectorAll('form[data-purchase-related-options-url]').forEach(function (form) {
+		initializePurchaseRelatedDropdowns(form);
+	});
+
 	configureBlurValidation();
 	initializeValidationSummaryAnimations();
 	initializeFormSubmissionAnimations();
@@ -97,23 +101,17 @@ function configureBlurValidation() {
 	}
 
 	window.jQuery.validator.setDefaults({
-		ignore: ':hidden:not(.autocomplete-dropdown__value)',
-		onfocusout: function (element) {
-			this.element(element);
-		},
+		ignore: ':hidden:not(.autocomplete-dropdown__value):not(.date-picker-value)',
+		onfocusout: false,
 		onkeyup: false,
-		onclick: function (element) {
-			this.element(element);
-		},
+		onclick: false,
 		highlight: function (element) {
 			element.classList.add('is-invalid');
-			element.classList.remove('is-valid');
 			animateValidationState(element, 'invalid');
 		},
 		unhighlight: function (element) {
 			element.classList.remove('is-invalid');
-			element.classList.add('is-valid');
-			animateValidationState(element, 'valid');
+			element.classList.remove('is-valid');
 		}
 	});
 
@@ -122,12 +120,6 @@ function configureBlurValidation() {
 		if (!form.data('validator')) {
 			form.validate();
 		}
-
-		form.on('focusout', 'input, textarea, select', function () {
-			if (form.data('validator')) {
-				form.validate().element(this);
-			}
-		});
 	});
 }
 
@@ -419,6 +411,7 @@ function initializeAutocompleteDropdown(dropdown) {
 
 	let activeRequest = null;
 	let selectedText = input.value || '';
+	let selectionCleared = false;
 
 	function hideResults() {
 		resultList.classList.add('d-none');
@@ -435,6 +428,7 @@ function initializeAutocompleteDropdown(dropdown) {
 		hiddenInput.value = option.id;
 		input.value = option.text;
 		selectedText = option.text;
+		selectionCleared = false;
 		hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
 		validateAutocompleteValue(input, hiddenInput);
 		hideResults();
@@ -483,7 +477,10 @@ function initializeAutocompleteDropdown(dropdown) {
 	input.addEventListener('input', debounce(function () {
 		const query = input.value.trim();
 		if (query !== selectedText) {
-			hiddenInput.value = emptyValue;
+			if (hiddenInput.value !== emptyValue) {
+				hiddenInput.value = emptyValue;
+				selectionCleared = true;
+			}
 		}
 
 		if (query.length < 1) {
@@ -526,6 +523,10 @@ function initializeAutocompleteDropdown(dropdown) {
 			if (hiddenInput.value === emptyValue) {
 				input.value = '';
 				selectedText = '';
+				if (selectionCleared) {
+					hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+				}
+				selectionCleared = false;
 			}
 			hideResults();
 		}, 120);
@@ -533,6 +534,145 @@ function initializeAutocompleteDropdown(dropdown) {
 
 	input.addEventListener('input', function () {
 		dropdown.classList.add('anim-loading-inline');
+	});
+}
+
+function initializePurchaseRelatedDropdowns(form) {
+	const endpoint = form.dataset.purchaseRelatedOptionsUrl;
+	const userInput = form.querySelector('input[name="UserProfileId"]');
+	const spendingSessionSelect = form.querySelector('select[name="SpendingSessionId"]');
+	const budgetPlanSelect = form.querySelector('select[name="BudgetPlanId"]');
+	const wishlistItemSelect = form.querySelector('select[name="WishlistItemId"]');
+	const amountInput = form.querySelector('input[name="Amount"]');
+
+	if (!endpoint || !userInput) {
+		return;
+	}
+
+	const dropdowns = [
+		{ select: spendingSessionSelect, key: 'spendingSessions' },
+		{ select: budgetPlanSelect, key: 'budgetPlans' },
+		{ select: wishlistItemSelect, key: 'wishlistItems' }
+	].filter(function (item) {
+		return Boolean(item.select);
+	});
+
+	if (dropdowns.length === 0) {
+		return;
+	}
+
+	let activeRequest = null;
+	let wishlistPriceMap = {};
+
+	function getPlaceholderText(select) {
+		return select.options.length > 0 ? select.options[0].textContent : 'Select an option...';
+	}
+
+	function populateSelect(select, options) {
+		const currentValue = select.value;
+		const placeholderText = getPlaceholderText(select);
+		const optionExists = options.some(function (option) {
+			return String(option.id) === String(currentValue);
+		});
+
+		select.innerHTML = '';
+
+		const placeholder = document.createElement('option');
+		placeholder.value = '';
+		placeholder.textContent = placeholderText;
+		select.appendChild(placeholder);
+
+		options.forEach(function (option) {
+			const selectOption = document.createElement('option');
+			selectOption.value = option.id;
+			selectOption.textContent = option.text;
+			if (typeof option.currentPrice !== 'undefined') {
+				selectOption.dataset.currentPrice = String(option.currentPrice);
+			}
+			select.appendChild(selectOption);
+		});
+
+		select.value = optionExists ? currentValue : '';
+	}
+
+	function setAmountFromWishlistSelect() {
+		if (!amountInput || !wishlistItemSelect) {
+			return;
+		}
+
+		const selectedOption = wishlistItemSelect.selectedOptions && wishlistItemSelect.selectedOptions.length > 0
+			? wishlistItemSelect.selectedOptions[0]
+			: null;
+		if (!selectedOption) {
+			return;
+		}
+
+		const currentPrice = selectedOption.dataset.currentPrice || wishlistPriceMap[wishlistItemSelect.value];
+		if (!currentPrice) {
+			return;
+		}
+
+		amountInput.value = currentPrice;
+		amountInput.dispatchEvent(new Event('input', { bubbles: true }));
+		amountInput.dispatchEvent(new Event('change', { bubbles: true }));
+	}
+
+	function clearSelects() {
+		dropdowns.forEach(function (item) {
+			populateSelect(item.select, []);
+		});
+	}
+
+	async function refreshOptions() {
+		const userProfileId = userInput.value.trim();
+
+		if (!userProfileId || userProfileId === '0') {
+			clearSelects();
+			return;
+		}
+
+		if (activeRequest) {
+			activeRequest.abort();
+		}
+
+		activeRequest = new AbortController();
+		const response = await fetch(`${endpoint}?userProfileId=${encodeURIComponent(userProfileId)}`, {
+			signal: activeRequest.signal
+		});
+
+		if (!response.ok) {
+			throw new Error(`Request failed with status ${response.status}`);
+		}
+
+		const data = await response.json();
+		wishlistPriceMap = {};
+		(data.wishlistPrices || []).forEach(function (item) {
+			wishlistPriceMap[String(item.id)] = String(item.currentPrice);
+		});
+		dropdowns.forEach(function (item) {
+			populateSelect(item.select, data[item.key] || []);
+		});
+		setAmountFromWishlistSelect();
+	}
+
+	if (wishlistItemSelect) {
+		wishlistItemSelect.addEventListener('change', function () {
+			setAmountFromWishlistSelect();
+		});
+	}
+
+	userInput.addEventListener('change', function () {
+		refreshOptions().catch(function (error) {
+			if (error.name !== 'AbortError') {
+				console.error('Purchase dropdown refresh failed:', error);
+			}
+		});
+	});
+
+	refreshOptions().catch(function (error) {
+		if (error.name !== 'AbortError') {
+			console.error('Purchase dropdown refresh failed:', error);
+		}
 	});
 }
 
