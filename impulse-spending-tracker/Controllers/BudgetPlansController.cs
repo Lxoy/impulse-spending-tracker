@@ -84,6 +84,17 @@ namespace impulse_spending_tracker.Controllers
             plan.UserProfile = _userProfileRepository.GetById(plan.UserProfileId);
         }
 
+        private bool ValidateDateRange(Models.BudgetPlan plan)
+        {
+            if (plan.ValidFrom.HasValue && plan.ValidTo.HasValue && plan.ValidFrom.Value.Date > plan.ValidTo.Value.Date)
+            {
+                ModelState.AddModelError(nameof(Models.BudgetPlan.ValidTo), "Valid From ne smije biti veći od Valid To.");
+                return false;
+            }
+
+            return true;
+        }
+
         [HttpGet("create")]
         public IActionResult Create()
         {
@@ -95,7 +106,7 @@ namespace impulse_spending_tracker.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Models.BudgetPlan plan)
         {
-            if (!ModelState.IsValid)
+            if (!ValidateDateRange(plan) || !ModelState.IsValid)
             {
                 LoadDropdownData();
                 PopulateSelectedUser(plan);
@@ -123,7 +134,7 @@ namespace impulse_spending_tracker.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Models.BudgetPlan plan)
         {
-            if (!ModelState.IsValid)
+            if (!ValidateDateRange(plan) || !ModelState.IsValid)
             {
                 LoadDropdownData();
                 PopulateSelectedUser(plan);

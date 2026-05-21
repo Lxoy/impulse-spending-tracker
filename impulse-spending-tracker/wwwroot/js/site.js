@@ -100,9 +100,11 @@ function configureBlurValidation() {
 		return;
 	}
 
-	window.jQuery.validator.setDefaults({
+	var blurValidationSettings = {
 		ignore: ':hidden:not(.autocomplete-dropdown__value):not(.date-picker-value)',
-		onfocusout: false,
+		onfocusout: function (element) {
+			runFieldValidationOnBlur(element);
+		},
 		onkeyup: false,
 		onclick: false,
 		highlight: function (element) {
@@ -113,14 +115,65 @@ function configureBlurValidation() {
 			element.classList.remove('is-invalid');
 			element.classList.remove('is-valid');
 		}
-	});
+	};
+
+	window.jQuery.validator.setDefaults(blurValidationSettings);
 
 	window.jQuery('form').each(function () {
 		const form = window.jQuery(this);
-		if (!form.data('validator')) {
+		const validator = form.data('validator');
+		if (validator) {
+			validator.settings.ignore = blurValidationSettings.ignore;
+			validator.settings.onfocusout = blurValidationSettings.onfocusout;
+			validator.settings.onkeyup = blurValidationSettings.onkeyup;
+			validator.settings.onclick = blurValidationSettings.onclick;
+			validator.settings.highlight = blurValidationSettings.highlight;
+			validator.settings.unhighlight = blurValidationSettings.unhighlight;
+		} else {
 			form.validate();
 		}
+
+		attachBlurValidationToForm(this);
 	});
+}
+
+function attachBlurValidationToForm(formElement) {
+	if (!formElement || formElement.__blurValidationAttached) {
+		return;
+	}
+
+	formElement.__blurValidationAttached = true;
+	formElement.addEventListener('focusout', function (event) {
+		runFieldValidationOnBlur(event.target);
+	});
+}
+
+function runFieldValidationOnBlur(element) {
+	try {
+		if (!element || !window.jQuery || !window.jQuery.validator) {
+			return;
+		}
+
+		var $el = window.jQuery(element);
+		if (!$el || !$el.length) {
+			return;
+		}
+
+		if ($el.is(':hidden') && !$el.hasClass('autocomplete-dropdown__value') && !$el.hasClass('date-picker-value')) {
+			return;
+		}
+
+		$el.valid();
+
+		if ($el.hasClass('date-picker-input')) {
+			var hidden = $el.closest('[data-date-picker]').find('.date-picker-value');
+			if (hidden && hidden.length) {
+				hidden.trigger('change');
+			}
+		}
+	} catch (e) {
+		// swallow errors - validation should not break the form
+	}
 }
 
 function animateValidationState(element, state) {

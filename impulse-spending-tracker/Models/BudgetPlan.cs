@@ -41,14 +41,6 @@ namespace impulse_spending_tracker.Models
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            // Compare only dates so time parts don't make validation fail unintentionally
-            if (ValidFrom.HasValue && ValidTo.HasValue && ValidTo.Value.Date < ValidFrom.Value.Date)
-            {
-                yield return new ValidationResult(
-                    "Valid To date must be on or after Valid From date.",
-                    new[] { nameof(ValidTo), nameof(ValidFrom) });
-            }
-
             // Treat null limits as zero for the combined check
             var essential = EssentialCategoryLimit ?? 0m;
             var discretionary = DiscretionaryCategoryLimit ?? 0m;
