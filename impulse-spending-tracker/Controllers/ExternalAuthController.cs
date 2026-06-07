@@ -66,7 +66,10 @@ namespace impulse_spending_tracker.Controllers
                 email = $"google-{externalId}@local.invalid";
             }
 
-            var user = await _userManager.FindByEmailAsync(email);
+            const string loginProvider = "Google";
+            var user = await _userManager.FindByLoginAsync(loginProvider, externalId);
+            user ??= await _userManager.FindByEmailAsync(email);
+
             if (user == null)
             {
                 user = new Models.AppUser
@@ -79,6 +82,22 @@ namespace impulse_spending_tracker.Controllers
 
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
+                {
+                    await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+                    return LocalRedirect("/Identity/Account/Login");
+                }
+            }
+
+            var userLogins = await _userManager.GetLoginsAsync(user);
+            if (!userLogins.Any(login =>
+                    string.Equals(login.LoginProvider, loginProvider, StringComparison.OrdinalIgnoreCase) &&
+                    login.ProviderKey == externalId))
+            {
+                var addLoginResult = await _userManager.AddLoginAsync(
+                    user,
+                    new UserLoginInfo(loginProvider, externalId, loginProvider));
+
+                if (!addLoginResult.Succeeded)
                 {
                     await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
                     return LocalRedirect("/Identity/Account/Login");

@@ -85,8 +85,13 @@ namespace impulse_spending_tracker.Repositories
 
         public void Delete(UserProfile user)
         {
-            user.IsDeleted = true;
-            _dbContext.UserProfiles.Update(user);
+            var existing = _dbContext.UserProfiles.SingleOrDefault(item => item.Id == user.Id);
+            if (existing is null)
+            {
+                throw new InvalidOperationException($"User profile with id {user.Id} was not found.");
+            }
+
+            existing.IsDeleted = true;
             _dbContext.SaveChanges();
         }
     }

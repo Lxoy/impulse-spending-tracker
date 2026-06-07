@@ -32,6 +32,38 @@ namespace impulse_spending_tracker.Controllers
             return !string.IsNullOrEmpty(currentUserId) && user.AppUserId == currentUserId;
         }
 
+        private bool IsEditingOwnProfile(impulse_spending_tracker.Models.UserProfile user)
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            return !string.IsNullOrEmpty(currentUserId) && user.AppUserId == currentUserId;
+        }
+
+        private async Task<bool> IsGoogleAccountAsync(impulse_spending_tracker.Models.UserProfile user)
+        {
+            if (string.IsNullOrWhiteSpace(user.AppUserId))
+            {
+                return false;
+            }
+
+            var appUser = await _userManager.FindByIdAsync(user.AppUserId);
+            if (appUser is null)
+            {
+                return false;
+            }
+
+            var logins = await _userManager.GetLoginsAsync(appUser);
+            return logins.Any(login => string.Equals(login.LoginProvider, "Google", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private async Task LoadEditPermissionsAsync(impulse_spending_tracker.Models.UserProfile user)
+        {
+            var isOwnProfile = IsEditingOwnProfile(user);
+            var isGoogleAccount = await IsGoogleAccountAsync(user);
+
+            ViewBag.CanEditRiskToleranceScore = User.IsInRole("Admin") || !isOwnProfile;
+            ViewBag.CanEditEmail = !isGoogleAccount || !isOwnProfile;
+        }
+
         [HttpGet("")]
         public IActionResult Index()
         {
@@ -74,7 +106,7 @@ namespace impulse_spending_tracker.Controllers
 
         [Authorize]
         [HttpGet("edit")]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             var user = _userProfileRepository.GetById(id);
             if (user is null)
@@ -87,19 +119,15 @@ namespace impulse_spending_tracker.Controllers
                 return Forbid();
             }
 
+            await LoadEditPermissionsAsync(user);
             return View(user);
         }
 
         [Authorize]
         [HttpPost("edit")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Models.UserProfile user)
+        public async Task<IActionResult> Edit(Models.UserProfile user)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(user);
-            }
-
             var existingUser = _userProfileRepository.GetById(user.Id);
             if (existingUser is null)
             {
@@ -109,6 +137,26 @@ namespace impulse_spending_tracker.Controllers
             if (!CanManageUserProfile(existingUser))
             {
                 return Forbid();
+            }
+
+            if (IsEditingOwnProfile(existingUser) && !User.IsInRole("Admin"))
+            {
+                user.RiskToleranceScore = existingUser.RiskToleranceScore;
+                ModelState.Remove(nameof(Models.UserProfile.RiskToleranceScore));
+            }
+
+            if (IsEditingOwnProfile(existingUser) && await IsGoogleAccountAsync(existingUser))
+            {
+                user.Email = existingUser.Email;
+                ModelState.Remove(nameof(Models.UserProfile.Email));
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await LoadEditPermissionsAsync(existingUser);
+                user.AppUserId = existingUser.AppUserId;
+                user.CreatedAt = existingUser.CreatedAt;
+                return View(user);
             }
 
             user.AppUserId = existingUser.AppUserId;
