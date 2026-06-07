@@ -519,7 +519,10 @@ static class IdentitySeeder
     public static async Task SeedAsync(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
+        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var db = scope.ServiceProvider.GetRequiredService<ImpulseSpendingDbContext>();
 
         foreach (var roleName in new[] { "Admin", "Manager", "User" })
         {
@@ -527,6 +530,72 @@ static class IdentitySeeder
             {
                 await roleManager.CreateAsync(new IdentityRole(roleName));
             }
+        }
+
+        var adminEmail = configuration["SeedAdmin:Email"];
+        var adminPassword = configuration["SeedAdmin:Password"];
+
+        if (string.IsNullOrWhiteSpace(adminEmail) || string.IsNullOrWhiteSpace(adminPassword))
+        {
+            return;
+        }
+
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        if (adminUser is null)
+        {
+            adminUser = new AppUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                EmailConfirmed = true,
+                OIB = configuration["SeedAdmin:OIB"] ?? string.Empty,
+                JMBG = configuration["SeedAdmin:JMBG"] ?? string.Empty
+            };
+
+            var createResult = await userManager.CreateAsync(adminUser, adminPassword);
+            if (!createResult.Succeeded)
+            {
+                var errors = string.Join("; ", createResult.Errors.Select(error => error.Description));
+                throw new InvalidOperationException($"Failed to seed admin user: {errors}");
+            }
+        }
+
+        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+
+        var profile = await db.UserProfiles.FirstOrDefaultAsync(item => item.AppUserId == adminUser.Id || item.Email == adminEmail);
+        if (profile is null)
+        {
+            profile = new UserProfile
+            {
+                AppUserId = adminUser.Id,
+                FirstName = configuration["SeedAdmin:FirstName"] ?? "Spendora",
+                LastName = configuration["SeedAdmin:LastName"] ?? "Admin",
+                Email = adminEmail,
+                DateOfBirth = DateTime.TryParse(configuration["SeedAdmin:DateOfBirth"], out var dateOfBirth)
+                    ? dateOfBirth
+                    : new DateTime(2000, 1, 1),
+                MonthlyNetIncome = decimal.TryParse(configuration["SeedAdmin:MonthlyNetIncome"], out var monthlyNetIncome)
+                    ? monthlyNetIncome
+                    : 1m,
+                RiskToleranceScore = int.TryParse(configuration["SeedAdmin:RiskToleranceScore"], out var riskToleranceScore)
+                    ? riskToleranceScore
+                    : 1,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            db.UserProfiles.Add(profile);
+            await db.SaveChangesAsync();
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(profile.AppUserId))
+        {
+            profile.AppUserId = adminUser.Id;
+            db.UserProfiles.Update(profile);
+            await db.SaveChangesAsync();
         }
     }
 }

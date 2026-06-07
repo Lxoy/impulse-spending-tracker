@@ -135,11 +135,13 @@ namespace impulse_spending_tracker.Areas.Identity.Pages.Account
                 // If existing.AppUserId is not null and not equal to this user, do not overwrite.
             }
 
-            var roleName = await _userManager.Users.CountAsync() == 1 ? "Admin" : "User";
-            if (await _roleManager.RoleExistsAsync(roleName))
+            const string defaultRoleName = "User";
+            if (!await _roleManager.RoleExistsAsync(defaultRoleName))
             {
-                await _userManager.AddToRoleAsync(user, roleName);
+                await _roleManager.CreateAsync(new IdentityRole(defaultRoleName));
             }
+
+            await _userManager.AddToRoleAsync(user, defaultRoleName);
 
             // After registration, redirect user to set their MonthlyNetIncome before signing them in.
             return RedirectToPage("/Account/SetIncome", new { area = "Identity", userId = user.Id, returnUrl });
