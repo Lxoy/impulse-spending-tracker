@@ -1,9 +1,11 @@
 using impulse_spending_tracker.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace impulse_spending_tracker.Controllers
 {
+    [Authorize]
     [Route("merchants")]
     public class MerchantsController : Controller
     {
@@ -52,12 +54,14 @@ namespace impulse_spending_tracker.Controllers
             return View(merchant);
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("create")]
         public IActionResult Create()
         {
             return View(new Models.Merchant());
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Models.Merchant merchant)
@@ -71,6 +75,7 @@ namespace impulse_spending_tracker.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("edit")]
         public IActionResult Edit(int id)
         {
@@ -83,6 +88,7 @@ namespace impulse_spending_tracker.Controllers
             return View(merchant);
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost("edit")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Models.Merchant merchant)
@@ -96,6 +102,7 @@ namespace impulse_spending_tracker.Controllers
             return RedirectToAction(nameof(Details), new { id = merchant.Id });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("delete")]
         public IActionResult Delete(int id)
         {
@@ -108,6 +115,7 @@ namespace impulse_spending_tracker.Controllers
             return View(merchant);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("delete")]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(Models.Merchant model)

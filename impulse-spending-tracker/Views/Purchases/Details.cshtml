@@ -19,7 +19,7 @@
         <p class="details-subtitle">Detailed context around amount, trigger, and emotional state at the moment of purchase.</p>
         <div class="details-chip-row">
             <span class="details-chip">@Model.Amount.ToString("F2") @Model.Currency</span>
-            <span class="details-chip">Trigger @Model.TriggerType</span>
+            <span class="details-chip">Trigger @(Model.TriggerTypeTag?.Name ?? Model.TriggerType.ToString())</span>
             <span class="details-chip">Need @Model.NeedLevel / 10</span>
         </div>
     </section>
@@ -40,7 +40,7 @@
                         </div>
                         <div class="details-row">
                             <dt>Trigger</dt>
-                            <dd>@Model.TriggerType</dd>
+                            <dd>@(Model.TriggerTypeTag?.Name ?? Model.TriggerType.ToString())</dd>
                         </div>
                         <div class="details-row">
                             <dt>Need level</dt>
@@ -84,6 +84,14 @@
                 <h2 class="h6 mb-2">Quick Hint</h2>
                 <p class="mb-0 text-muted">Low need-level purchases with high amount often indicate a stronger impulse event worth reviewing.</p>
             </aside>
+            <aside class="details-aside card mb-3">
+                <div class="card-body">
+                    <h2 class="details-panel-title">Attachments</h2>
+                    <div id="purchaseAttachmentList" data-list-url="@Url.Action("GetAttachments", "Purchases", new { id = Model.Id })">
+                        <div class="text-muted">Loading attachments...</div>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
 
@@ -93,3 +101,51 @@
         <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
     </div>
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        function loadAttachments() {
+            var list = document.getElementById("purchaseAttachmentList");
+            if (!list) return;
+            var url = list.getAttribute("data-list-url");
+
+            fetch(url, {
+                method: "GET",
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+                .then(function (response) { return response.text(); })
+                .then(function (html) { list.innerHTML = html; })
+                .catch(function () {
+                    list.innerHTML = "<div class='alert alert-warning mb-0'>Unable to load attachments.</div>";
+                });
+        }
+
+        function deleteAttachment(id) {
+            var body = new URLSearchParams({ id: id });
+
+            fetch("@Url.Action("DeleteAttachment", "Purchases")", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: body
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Delete failed");
+                    }
+
+                    return response.json();
+                })
+                .then(function () { loadAttachments(); })
+                .catch(function () {
+                    alert("Unable to delete attachment.");
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            loadAttachments();
+        });
+    </script>
+}

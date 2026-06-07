@@ -25,6 +25,10 @@ namespace impulse_spending_tracker.Models
         [ForeignKey(nameof(WishlistItem))]
         public int? WishlistItemId { get; set; }
 
+        [ForeignKey(nameof(TriggerTypeTag))]
+        [Range(1, int.MaxValue, ErrorMessage = "A trigger type must be selected.")]
+        public int? TriggerTypeId { get; set; }
+
         [Required(ErrorMessage = "Title is required.")]
         [StringLength(140, MinimumLength = 2, ErrorMessage = "Title must be between 2 and 140 characters.")]
         public string Title { get; set; } = string.Empty;
@@ -57,7 +61,9 @@ namespace impulse_spending_tracker.Models
         public virtual SpendingSession? SpendingSession { get; set; }
         public virtual BudgetPlan? BudgetPlan { get; set; }
         public virtual WishlistItem? WishlistItem { get; set; }
-        public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
+        public virtual TriggerType? TriggerTypeTag { get; set; }
+        public virtual ICollection<TriggerType> TriggerTypes { get; set; } = new List<TriggerType>();
+        public virtual ICollection<PurchaseAttachment> Attachments { get; set; } = new List<PurchaseAttachment>();
         public bool IsDeleted { get; set; }
     }
 }

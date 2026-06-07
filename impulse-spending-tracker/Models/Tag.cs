@@ -2,13 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace impulse_spending_tracker.Models
 {
-    public class Tag
+    public class TriggerType
     {
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Tag name is required.")]
-        [StringLength(50, MinimumLength = 2, ErrorMessage = "Tag name must be between 2 and 50 characters.")]
+        [Required(ErrorMessage = "Trigger type name is required.")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Trigger type name must be between 2 and 50 characters.")]
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Color is required.")]

@@ -15,19 +15,34 @@ namespace impulse_spending_tracker.Repositories
 
         public IReadOnlyList<SpendingSession> GetAll()
         {
-            return _dbContext.SpendingSessions
+            var sessions = _dbContext.SpendingSessions
                 .AsNoTracking()
                 .Include(s => s.UserProfile)
+                .Include(s => s.Purchases)
                 .ToList();
+
+            foreach (var session in sessions)
+            {
+                session.SpentAmount = session.Purchases.Sum(purchase => purchase.Amount);
+            }
+
+            return sessions;
         }
 
         public SpendingSession? GetById(int id)
         {
-            return _dbContext.SpendingSessions
+            var session = _dbContext.SpendingSessions
                 .AsNoTracking()
                 .Include(s => s.UserProfile)
                 .Include(s => s.Purchases)
                 .SingleOrDefault(s => s.Id == id);
+
+            if (session is not null)
+            {
+                session.SpentAmount = session.Purchases.Sum(purchase => purchase.Amount);
+            }
+
+            return session;
         }
 
         public void Create(SpendingSession session)

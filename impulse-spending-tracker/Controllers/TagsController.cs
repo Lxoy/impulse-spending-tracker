@@ -1,15 +1,17 @@
 using impulse_spending_tracker.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace impulse_spending_tracker.Controllers
 {
-    [Route("tags")]
-    public class TagsController : Controller
+    [Authorize]
+    [Route("trigger-types")]
+    public class TriggerTypesController : Controller
     {
-        private readonly TagRepository _tagRepository;
+        private readonly TriggerTypeRepository _tagRepository;
 
-        public TagsController(TagRepository tagRepository)
+        public TriggerTypesController(TriggerTypeRepository tagRepository)
         {
             _tagRepository = tagRepository;
         }
@@ -47,18 +49,21 @@ namespace impulse_spending_tracker.Controllers
                 return NotFound();
             }
 
+            ViewBag.CanManageTag = User.IsInRole("Admin");
             return View(tag);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("create")]
         public IActionResult Create()
         {
-            return View(new Models.Tag());
+            return View(new Models.TriggerType());
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Models.Tag tag)
+        public IActionResult Create(Models.TriggerType tag)
         {
             if (!ModelState.IsValid)
             {
@@ -69,6 +74,7 @@ namespace impulse_spending_tracker.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("edit")]
         public IActionResult Edit(int id)
         {
@@ -81,9 +87,10 @@ namespace impulse_spending_tracker.Controllers
             return View(tag);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("edit")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Models.Tag tag)
+        public IActionResult Edit(Models.TriggerType tag)
         {
             if (!ModelState.IsValid)
             {
@@ -94,6 +101,7 @@ namespace impulse_spending_tracker.Controllers
             return RedirectToAction(nameof(Details), new { id = tag.Id });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("delete")]
         public IActionResult Delete(int id)
         {
@@ -106,9 +114,10 @@ namespace impulse_spending_tracker.Controllers
             return View(tag);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(Models.Tag model)
+        public IActionResult Delete(Models.TriggerType model)
         {
             var tag = _tagRepository.GetById(model.Id);
             if (tag is null)
@@ -123,7 +132,7 @@ namespace impulse_spending_tracker.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError(string.Empty, "Unable to delete this tag because it is used by purchases.");
+                ModelState.AddModelError(string.Empty, "Unable to delete this trigger type because it is used by purchases.");
                 return View(tag);
             }
         }

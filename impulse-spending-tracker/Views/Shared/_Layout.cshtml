@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Spendora</title>
+    <title>Spendora</title>
+    <link rel="icon" type="image/svg+xml" href="~/icons/spendora.svg" />
+    <link rel="alternate" href="~/favicon.ico" />
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -25,7 +27,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse app-navbar__collapse" id="appNav">
+                <div class="collapse navbar-collapse app-navbar__collapse align-items-lg-center" id="appNav">
                     <ul class="navbar-nav app-nav app-nav--primary">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -48,12 +50,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="SpendingSessions" asp-action="Index">Sessions</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Tags</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="TriggerTypes" asp-action="Index">Trigger Types</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="WishlistItems" asp-action="Index">Wishlist</a>
                         </li>
                     </ul>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>

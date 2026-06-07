@@ -23,7 +23,10 @@
             </div>
             <div class="index-hero__actions">
                 <span class="index-count-chip" id="budgetPlanCount" data-singular="plan" data-plural="plans">@Model.Count plans</span>
-                <a class="btn btn-primary" asp-action="Create">Create plan</a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-primary" asp-action="Create">Create plan</a>
+                }
             </div>
         </div>
 

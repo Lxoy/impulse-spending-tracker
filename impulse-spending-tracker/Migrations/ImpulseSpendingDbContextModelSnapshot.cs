@@ -22,19 +22,229 @@ namespace impulse_spending_tracker.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
             modelBuilder.Entity("PurchaseTags", b =>
                 {
                     b.Property<int>("PurchasesId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TagsId")
+                    b.Property<int>("TriggerTypesId")
                         .HasColumnType("int");
 
-                    b.HasKey("PurchasesId", "TagsId");
+                    b.HasKey("PurchasesId", "TriggerTypesId");
 
-                    b.HasIndex("TagsId");
+                    b.HasIndex("TriggerTypesId");
 
                     b.ToTable("PurchaseTags");
+                });
+
+            modelBuilder.Entity("impulse_spending_tracker.Models.AppUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("JMBG")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("varchar(13)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("OIB")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("varchar(11)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("impulse_spending_tracker.Models.BudgetPlan", b =>
@@ -174,6 +384,9 @@ namespace impulse_spending_tracker.Migrations
                     b.Property<int>("TriggerType")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TriggerTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserProfileId")
                         .HasColumnType("int");
 
@@ -188,12 +401,53 @@ namespace impulse_spending_tracker.Migrations
 
                     b.HasIndex("SpendingSessionId");
 
+                    b.HasIndex("TriggerTypeId");
+
                     b.HasIndex("UserProfileId");
 
                     b.HasIndex("WishlistItemId")
                         .IsUnique();
 
                     b.ToTable("Purchases");
+                });
+
+            modelBuilder.Entity("impulse_spending_tracker.Models.PurchaseAttachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("PurchaseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PurchaseId");
+
+                    b.ToTable("PurchaseAttachments");
                 });
 
             modelBuilder.Entity("impulse_spending_tracker.Models.SpendingSession", b =>
@@ -248,7 +502,7 @@ namespace impulse_spending_tracker.Migrations
                     b.ToTable("SpendingSessions");
                 });
 
-            modelBuilder.Entity("impulse_spending_tracker.Models.Tag", b =>
+            modelBuilder.Entity("impulse_spending_tracker.Models.TriggerType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -275,7 +529,7 @@ namespace impulse_spending_tracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("TriggerTypes");
                 });
 
             modelBuilder.Entity("impulse_spending_tracker.Models.UserProfile", b =>
@@ -285,6 +539,9 @@ namespace impulse_spending_tracker.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -316,6 +573,9 @@ namespace impulse_spending_tracker.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId")
+                        .IsUnique();
 
                     b.ToTable("UserProfiles");
                 });
@@ -372,6 +632,57 @@ namespace impulse_spending_tracker.Migrations
                     b.ToTable("WishlistItems");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("impulse_spending_tracker.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("impulse_spending_tracker.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("impulse_spending_tracker.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("impulse_spending_tracker.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PurchaseTags", b =>
                 {
                     b.HasOne("impulse_spending_tracker.Models.Purchase", null)
@@ -380,9 +691,9 @@ namespace impulse_spending_tracker.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("impulse_spending_tracker.Models.Tag", null)
+                    b.HasOne("impulse_spending_tracker.Models.TriggerType", null)
                         .WithMany()
-                        .HasForeignKey("TagsId")
+                        .HasForeignKey("TriggerTypesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -416,6 +727,11 @@ namespace impulse_spending_tracker.Migrations
                         .HasForeignKey("SpendingSessionId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("impulse_spending_tracker.Models.TriggerType", "TriggerTypeTag")
+                        .WithMany()
+                        .HasForeignKey("TriggerTypeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("impulse_spending_tracker.Models.UserProfile", "UserProfile")
                         .WithMany("Purchases")
                         .HasForeignKey("UserProfileId")
@@ -433,9 +749,22 @@ namespace impulse_spending_tracker.Migrations
 
                     b.Navigation("SpendingSession");
 
+                    b.Navigation("TriggerTypeTag");
+
                     b.Navigation("UserProfile");
 
                     b.Navigation("WishlistItem");
+                });
+
+            modelBuilder.Entity("impulse_spending_tracker.Models.PurchaseAttachment", b =>
+                {
+                    b.HasOne("impulse_spending_tracker.Models.Purchase", "Purchase")
+                        .WithMany("Attachments")
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Purchase");
                 });
 
             modelBuilder.Entity("impulse_spending_tracker.Models.SpendingSession", b =>
@@ -449,6 +778,16 @@ namespace impulse_spending_tracker.Migrations
                     b.Navigation("UserProfile");
                 });
 
+            modelBuilder.Entity("impulse_spending_tracker.Models.UserProfile", b =>
+                {
+                    b.HasOne("impulse_spending_tracker.Models.AppUser", "AppUser")
+                        .WithOne("UserProfile")
+                        .HasForeignKey("impulse_spending_tracker.Models.UserProfile", "AppUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("impulse_spending_tracker.Models.WishlistItem", b =>
                 {
                     b.HasOne("impulse_spending_tracker.Models.UserProfile", "UserProfile")
@@ -460,6 +799,11 @@ namespace impulse_spending_tracker.Migrations
                     b.Navigation("UserProfile");
                 });
 
+            modelBuilder.Entity("impulse_spending_tracker.Models.AppUser", b =>
+                {
+                    b.Navigation("UserProfile");
+                });
+
             modelBuilder.Entity("impulse_spending_tracker.Models.BudgetPlan", b =>
                 {
                     b.Navigation("CoveredPurchases");
@@ -468,6 +812,11 @@ namespace impulse_spending_tracker.Migrations
             modelBuilder.Entity("impulse_spending_tracker.Models.Merchant", b =>
                 {
                     b.Navigation("Purchases");
+                });
+
+            modelBuilder.Entity("impulse_spending_tracker.Models.Purchase", b =>
+                {
+                    b.Navigation("Attachments");
                 });
 
             modelBuilder.Entity("impulse_spending_tracker.Models.SpendingSession", b =>

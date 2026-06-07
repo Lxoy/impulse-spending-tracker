@@ -18,6 +18,11 @@
         <p class="form-kicker">Spending Sessions</p>
         <h1 class="form-title">Edit Spending Session</h1>
         <p class="form-subtitle">Update session chronology and conversion metrics.</p>
+            @if (!User.IsInRole("Admin") && ViewBag.CurrentUserProfile != null)
+            {
+                var cur = ViewBag.CurrentUserProfile as dynamic;
+                <p class="form-kicker text-muted small mb-1">@($"{cur.FirstName} {cur.LastName} ({cur.Email})")</p>
+            }
     </section>
 
     <section class="form-surface card border-0">
@@ -26,19 +31,44 @@
                 <input type="hidden" asp-for="Id" />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <div class="col-12 col-md-6 position-relative">
-                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
-                    {
-                        InputName = nameof(Model.UserProfileId),
-                        ValidationMessageFor = nameof(Model.UserProfileId),
-                        Label = "User",
-                        Placeholder = "Search users...",
-                        SearchUrl = Url.Action("Users", "Lookup") ?? "/lookup/users",
-                        EmptyMessage = "No users found.",
-                        SelectedId = Model.UserProfileId,
-                        SelectedText = Model.UserProfile is null ? string.Empty : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName} ({Model.UserProfile.Email})"
-                    })
-                </div>
+                @if (ViewBag.ShowUserSelector == true)
+                {
+                    <div class="col-12 col-md-6 position-relative">
+                        @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                        {
+                            InputName = nameof(Model.UserProfileId),
+                            ValidationMessageFor = nameof(Model.UserProfileId),
+                            Label = "User",
+                            Placeholder = "Search users...",
+                            SearchUrl = Url.Action("Users", "Lookup") ?? "/lookup/users",
+                            EmptyMessage = "No users found.",
+                            SelectedId = Model.UserProfileId,
+                            SelectedText = Model.UserProfile is null ? string.Empty : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName} ({Model.UserProfile.Email})"
+                        })
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="UserProfileId" />
+                }
+                    <div class="col-12 col-md-6 position-relative">
+                        @if (ViewBag.ShowUserSelector == true)
+                        {
+                            @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                            {
+                                InputName = nameof(Model.UserProfileId),
+                                ValidationMessageFor = nameof(Model.UserProfileId),
+                                Label = "User",
+                                Placeholder = "Search users...",
+                                SearchUrl = Url.Action("Users", "Lookup") ?? "/lookup/users",
+                                EmptyMessage = "No users found."
+                            })
+                        }
+                        else
+                        {
+                            <input type="hidden" asp-for="UserProfileId" />
+                        }
+                    </div>
                 <div class="col-12 col-md-6">
                     @await Html.PartialAsync("_DatePickerControl", Model.EndedAt, new ViewDataDictionary(ViewData) { { "IncludeTime", true }, { "For", nameof(Model.EndedAt) } })
                 </div>

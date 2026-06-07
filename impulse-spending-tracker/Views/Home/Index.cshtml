@@ -78,49 +78,30 @@
 
     <section class="trigger-heatmap-panel mt-4 card border-0">
         <div class="card-body p-4">
-            <h2 class="panel-title h5 mb-1">Trigger Heatmap</h2>
-            <p class="panel-subtitle text-muted mb-3">Visual intensity of impulse triggers by day of the month.</p>
-
-            <div class="trigger-heatmap-grid" aria-label="Trigger intensity grid">
-                <span class="trigger-cell intensity-1"></span>
-                <span class="trigger-cell intensity-2"></span>
-                <span class="trigger-cell intensity-2"></span>
-                <span class="trigger-cell intensity-3"></span>
-                <span class="trigger-cell intensity-1"></span>
-                <span class="trigger-cell intensity-4"></span>
-                <span class="trigger-cell intensity-3"></span>
-                <span class="trigger-cell intensity-2"></span>
-                <span class="trigger-cell intensity-5"></span>
-                <span class="trigger-cell intensity-3"></span>
-                <span class="trigger-cell intensity-1"></span>
-                <span class="trigger-cell intensity-4"></span>
-                <span class="trigger-cell intensity-2"></span>
-                <span class="trigger-cell intensity-2"></span>
-                <span class="trigger-cell intensity-3"></span>
-                <span class="trigger-cell intensity-1"></span>
-                <span class="trigger-cell intensity-5"></span>
-                <span class="trigger-cell intensity-4"></span>
-                <span class="trigger-cell intensity-3"></span>
-                <span class="trigger-cell intensity-2"></span>
-                <span class="trigger-cell intensity-1"></span>
-                <span class="trigger-cell intensity-2"></span>
-                <span class="trigger-cell intensity-4"></span>
-                <span class="trigger-cell intensity-3"></span>
-                <span class="trigger-cell intensity-2"></span>
-                <span class="trigger-cell intensity-1"></span>
-                <span class="trigger-cell intensity-3"></span>
-                <span class="trigger-cell intensity-5"></span>
+            <div class="d-flex align-items-start justify-content-between mb-2">
+                <div>
+                    <h2 class="panel-title h5 mb-1">Trigger heatmap — last 30 days</h2>
+                </div>
+                <div class="small text-muted">Last 30 days</div>
             </div>
 
-            <div class="trigger-legend mt-3">
-                <span>Low</span>
-                <span class="legend-dot intensity-1"></span>
-                <span class="legend-dot intensity-2"></span>
-                <span class="legend-dot intensity-3"></span>
-                <span class="legend-dot intensity-4"></span>
-                <span class="legend-dot intensity-5"></span>
-                <span>High</span>
+            <div class="heatmap-wrapper">
+                <div class="heatmap-main">
+                    <div class="heatmap-weekdays" aria-hidden="true">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div class="trigger-heatmap-grid" id="triggerHeatmapGrid" aria-label="Trigger intensity grid" role="list">
+                        <!-- heatmap cells will be injected here -->
+                    </div>
+                </div>
+
+                <aside class="trigger-legend mt-0" aria-hidden="true">
+                    <small class="text-muted mb-2">Low</small>
+                    <div class="legend-gradient" aria-hidden="true"></div>
+                    <small class="text-muted mt-2">High</small>
+                </aside>
             </div>
+
         </div>
     </section>
 
@@ -160,15 +141,126 @@
         </div>
     </section>
 
-    <section class="route-cards mt-4">
-        <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-3">
-            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">UP</p><h3 class="route-title h6">User Profiles</h3><p class="route-description">User financial baseline and risk profile.</p><a class="route-link" asp-controller="UserProfiles" asp-action="Index">Open list</a></div></article></div>
-            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">BP</p><h3 class="route-title h6">Budget Plans</h3><p class="route-description">Monthly limits and impulse caps.</p><a class="route-link" asp-controller="BudgetPlans" asp-action="Index">Open list</a></div></article></div>
-            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">PU</p><h3 class="route-title h6">Purchases</h3><p class="route-description">Actual spending events and triggers.</p><a class="route-link" asp-controller="Purchases" asp-action="Index">Open list</a></div></article></div>
-            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">SS</p><h3 class="route-title h6">Sessions</h3><p class="route-description">Behavior by platform and channel.</p><a class="route-link" asp-controller="SpendingSessions" asp-action="Index">Open list</a></div></article></div>
-            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">ME</p><h3 class="route-title h6">Merchants</h3><p class="route-description">Merchant exposure and order context.</p><a class="route-link" asp-controller="Merchants" asp-action="Index">Open list</a></div></article></div>
-            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">TG</p><h3 class="route-title h6">Tags</h3><p class="route-description">Classification signals for purchases.</p><a class="route-link" asp-controller="Tags" asp-action="Index">Open list</a></div></article></div>
-            <div class="col"><article class="route-card card h-100 border-0"><div class="card-body"><p class="route-icon">WL</p><h3 class="route-title h6">Wishlist</h3><p class="route-description">Desired items and conversion state.</p><a class="route-link" asp-controller="WishlistItems" asp-action="Index">Open list</a></div></article></div>
-        </div>
-    </section>
+    <!-- route-cards removed per user request -->
 </div>
+
+@section Scripts {
+    <style>
+        .heatmap-wrapper { width:100%; max-width:1200px; margin-left:auto; margin-right:auto; display:flex; gap:18px; align-items:stretch; }
+        .heatmap-main { flex:1; }
+        .heatmap-weekdays { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:8px; }
+        .heatmap-weekdays span { text-align:center; font-size:11px; color:var(--ui-text-muted); }
+
+        .trigger-heatmap-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+        .trigger-cell { width:100%; aspect-ratio:1 / 1; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:12px; color:var(--ui-text-muted); position:relative; cursor:default; border:1px solid rgba(15,118,110,0.06); background-clip:padding-box; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); transition: background 260ms ease, transform 220ms ease, opacity 300ms ease; }
+        .trigger-cell .day-label { font-size:12px; opacity:0.8; }
+        .trigger-cell.today { box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 0 0 2px rgba(14,165,233,0.06); }
+
+        /* tooltip removed by design; keep element hidden if present */
+        .trigger-cell .tooltip { display:none !important; }
+
+        .trigger-legend { display:flex; flex-direction:column; align-items:center; justify-content:stretch; width:48px; }
+        .legend-gradient { width:14px; flex:1 1 auto; min-height:60px; border-radius:6px; border:1px solid rgba(15,118,110,0.08); background: linear-gradient(180deg, var(--ui-surface-soft), var(--ui-surface-soft), var(--ui-accent)); box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); }
+
+        @@media (max-width: 768px) {
+            .heatmap-wrapper { max-width: 100%; display:block; }
+            .heatmap-weekdays, .trigger-heatmap-grid { grid-template-columns: repeat(7,36px); gap:6px; }
+            .trigger-cell, .heatmap-weekdays span { width:36px; height:36px; font-size:11px; }
+            .trigger-legend { width:100%; margin-top:10px; flex-direction:row; gap:8px; align-items:center; }
+            .legend-gradient { width:160px; height:10px; border-radius:6px; border:1px solid rgba(15,118,110,0.08); background: linear-gradient(90deg, var(--ui-surface-soft), var(--ui-surface-soft), var(--ui-accent)); }
+        }
+    </style>
+
+    <script>
+        (function () {
+            function lerp(a, b, t) { return Math.round(a + (b - a) * t); }
+            function parseColor(c) {
+                if (!c) return [0,0,0];
+                c = c.trim();
+                if (c.startsWith('rgb')) {
+                    var m = c.match(/\d+/g); return [parseInt(m[0]), parseInt(m[1]), parseInt(m[2])];
+                }
+                if (c.startsWith('#')) {
+                    var hex = c.slice(1);
+                    if (hex.length === 3) hex = hex.split('').map(function (s) { return s + s; }).join('');
+                    return [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
+                }
+                return [0,0,0];
+            }
+
+            var rootStyles = getComputedStyle(document.documentElement);
+            var light = parseColor(rootStyles.getPropertyValue('--ui-surface-soft') || '#f8f7f3');
+            var accent = parseColor(rootStyles.getPropertyValue('--ui-accent') || '#0f766e');
+            function mixColor(percent) {
+                return 'rgb(' + [lerp(light[0], accent[0], percent), lerp(light[1], accent[1], percent), lerp(light[2], accent[2], percent)].join(',') + ')';
+            }
+
+            fetch('@Url.Action("TriggerHeatmapData", "Home")')
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    var grid = document.getElementById('triggerHeatmapGrid');
+                    if (!grid) return;
+
+                    grid.innerHTML = '';
+
+                    var max = 0;
+                    data.forEach(function (d) { if (d.count > max) max = d.count; });
+
+                    data.forEach(function (d, idx) {
+                        var day = new Date(d.day + 'T00:00:00Z');
+                        var cnt = d.count || 0;
+                        var ratio = max > 0 ? (cnt / max) : 0;
+                        // compress the dynamic range so colors stay softer
+                        var t = Math.pow(ratio, 0.85);
+                        var color = mixColor(t);
+
+                        var el = document.createElement('button');
+                        el.type = 'button';
+                        el.className = 'trigger-cell';
+                        el.setAttribute('role','listitem');
+                        el.setAttribute('data-day', d.day);
+                        el.setAttribute('aria-label', d.day + ' — ' + cnt + ' triggers');
+                        // apply background but keep element hidden for entrance animation
+                        el.style.background = color;
+                        el.style.opacity = 0;
+                        el.style.transform = 'translateY(6px)';
+
+                        var label = document.createElement('span');
+                        label.className = 'day-label';
+                        label.textContent = day.getUTCDate();
+                        // decide label color based on computed background brightness for accessibility
+                        try {
+                            var bgRgb = parseColor(color);
+                            var brightness = (bgRgb[0] * 299 + bgRgb[1] * 587 + bgRgb[2] * 114) / 1000; // 0-255
+                            if (brightness < 140) {
+                                label.style.color = '#ffffff';
+                            } else {
+                                label.style.color = getComputedStyle(document.documentElement).getPropertyValue('--ui-text-muted') || '#6b7280';
+                            }
+                        } catch (e) {
+                            // fallback: keep muted text
+                        }
+
+                        el.appendChild(label);
+
+                        // subtle emphasis for today (local date comparison)
+                        var today = new Date();
+                        if (day.getUTCFullYear() === today.getFullYear() && day.getUTCMonth() === today.getMonth() && day.getUTCDate() === today.getDate()) {
+                            el.classList.add('today');
+                        }
+
+                        grid.appendChild(el);
+
+                        // staggered entrance
+                        (function (node, i) {
+                            setTimeout(function () {
+                                node.style.opacity = 1;
+                                node.style.transform = 'translateY(0)';
+                            }, 25 * (i % 12));
+                        })(el, idx);
+                    });
+                })
+                .catch(function () { console.warn('Unable to load trigger heatmap data'); });
+        })();
+    </script>
+}

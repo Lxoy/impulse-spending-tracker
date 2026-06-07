@@ -24,17 +24,26 @@
             <form asp-action="Create" method="post" class="form-grid row g-3" novalidate data-purchase-related-options-url="@Url.Action("DependentOptions", "Purchases")">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <div class="col-12 col-md-6 position-relative">
-                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
-                    {
-                        InputName = nameof(Model.UserProfileId),
-                        ValidationMessageFor = nameof(Model.UserProfileId),
-                        Label = "User",
-                        Placeholder = "Search users...",
-                        SearchUrl = Url.Action("Users", "Lookup") ?? "/lookup/users",
-                        EmptyMessage = "No users found."
-                    })
-                </div>
+                @if (ViewBag.ShowUserSelector == true)
+                {
+                    <div class="col-12 col-md-6 position-relative">
+                        @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                        {
+                            InputName = nameof(Model.UserProfileId),
+                            ValidationMessageFor = nameof(Model.UserProfileId),
+                            Label = "User",
+                            Placeholder = "Search users...",
+                            SearchUrl = Url.Action("Users", "Lookup") ?? "/lookup/users",
+                            EmptyMessage = "No users found.",
+                            SelectedId = Model.UserProfileId,
+                            SelectedText = Model.UserProfile is null ? string.Empty : $"{Model.UserProfile.FirstName} {Model.UserProfile.LastName} ({Model.UserProfile.Email})"
+                        })
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="UserProfileId" />
+                }
                 <div class="col-12 col-md-6 position-relative">
                     @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
                     {
@@ -43,7 +52,9 @@
                         Label = "Merchant",
                         Placeholder = "Search merchants...",
                         SearchUrl = Url.Action("Merchants", "Lookup") ?? "/lookup/merchants",
-                        EmptyMessage = "No merchants found."
+                        EmptyMessage = "No merchants found.",
+                        SelectedId = Model.MerchantId,
+                        SelectedText = Model.Merchant is null ? string.Empty : $"{Model.Merchant.Name} ({Model.Merchant.Category}, {Model.Merchant.CountryCode})"
                     })
                 </div>
                 <div class="col-12 col-md-6">
@@ -83,7 +94,7 @@
                     <span asp-validation-for="Currency" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-4">
-                    @await Html.PartialAsync("_DatePickerControl", Model.PurchasedAt, new ViewDataDictionary(ViewData) { { "IncludeTime", true }, { "For", nameof(Model.PurchasedAt) } })
+                    @await Html.PartialAsync("_DatePickerControl", Model.PurchasedAt, new ViewDataDictionary(ViewData) { { "IncludeTime", true }, { "For", nameof(Model.PurchasedAt) }, { "MaxDate", DateTime.Now.ToString("yyyy-MM-dd") } })
                 </div>
                 <div class="col-12 col-md-6">
                     <label asp-for="MoodBeforePurchase" class="form-label"></label>
@@ -101,11 +112,11 @@
                     <span asp-validation-for="Installments" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
-                    <label asp-for="TriggerType" class="form-label"></label>
-                    <select asp-for="TriggerType" asp-items="Html.GetEnumSelectList<ImpulseTriggerType>()" class="form-select">
+                    <label asp-for="TriggerTypeId" class="form-label">Trigger type</label>
+                    <select asp-for="TriggerTypeId" asp-items="@ViewBag.TriggerTypeId" class="form-select">
                         <option value="">Choose trigger type...</option>
                     </select>
-                    <span asp-validation-for="TriggerType" class="text-danger"></span>
+                    <span asp-validation-for="TriggerTypeId" class="text-danger"></span>
                 </div>
                 <div class="col-12">
                     <label asp-for="Notes" class="form-label"></label>

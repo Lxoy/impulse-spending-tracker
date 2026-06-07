@@ -23,7 +23,10 @@
             </div>
             <div class="index-hero__actions">
                 <span class="index-count-chip" id="merchantCount" data-singular="merchant" data-plural="merchants">@Model.Count merchants</span>
-                <a class="btn btn-primary" asp-action="Create">Create merchant</a>
+                @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                {
+                    <a class="btn btn-primary" asp-action="Create">Create merchant</a>
+                }
             </div>
         </div>
 
@@ -41,13 +44,15 @@
                placeholder="Search by merchant name..."
                aria-label="Search merchants by name"
                data-ajax-filter
-               data-url="@Url.Action("Filter", "Merchants")"
+               data-url="/api/merchants"
                data-target="#merchantTableBody"
                data-count-target="#merchantCount"
                data-singular="merchant"
                data-plural="merchants"
                data-empty-message="No merchants match your search."
-               data-column-count="5" />
+             data-column-count="5"
+             data-response-format="json"
+             data-row-renderer="merchant" />
         </div>
     </section>
 

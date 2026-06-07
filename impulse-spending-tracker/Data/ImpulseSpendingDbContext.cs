@@ -1,9 +1,10 @@
 using impulse_spending_tracker.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace impulse_spending_tracker.Data
 {
-    public class ImpulseSpendingDbContext : DbContext
+    public class ImpulseSpendingDbContext : IdentityDbContext<AppUser>
     {
         public ImpulseSpendingDbContext(DbContextOptions<ImpulseSpendingDbContext> options)
             : base(options)
@@ -16,7 +17,8 @@ namespace impulse_spending_tracker.Data
         public DbSet<SpendingSession> SpendingSessions => Set<SpendingSession>();
         public DbSet<BudgetPlan> BudgetPlans => Set<BudgetPlan>();
         public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
-        public DbSet<Tag> Tags => Set<Tag>();
+        public DbSet<PurchaseAttachment> PurchaseAttachments => Set<PurchaseAttachment>();
+        public DbSet<TriggerType> TriggerTypes => Set<TriggerType>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,6 +54,12 @@ namespace impulse_spending_tracker.Data
                 .HasForeignKey<Purchase>(p => p.WishlistItemId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<Purchase>()
+                .HasOne(p => p.TriggerTypeTag)
+                .WithMany()
+                .HasForeignKey(p => p.TriggerTypeId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<SpendingSession>()
                 .HasOne(s => s.UserProfile)
                 .WithMany(u => u.Sessions)
@@ -71,9 +79,22 @@ namespace impulse_spending_tracker.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Purchase>()
-                .HasMany(p => p.Tags)
+                .HasMany(p => p.TriggerTypes)
                 .WithMany(t => t.Purchases)
                 .UsingEntity("PurchaseTags");
+
+            modelBuilder.Entity<PurchaseAttachment>()
+                .HasOne(a => a.Purchase)
+                .WithMany(p => p.Attachments)
+                .HasForeignKey(a => a.PurchaseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Link UserProfile to Identity AppUser (1:1)
+            modelBuilder.Entity<UserProfile>()
+                .HasOne(up => up.AppUser)
+                .WithOne(u => u.UserProfile)
+                .HasForeignKey<UserProfile>(up => up.AppUserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Global query filters to hide soft-deleted records
             modelBuilder.Entity<UserProfile>().HasQueryFilter(u => !u.IsDeleted);
@@ -82,7 +103,7 @@ namespace impulse_spending_tracker.Data
             modelBuilder.Entity<SpendingSession>().HasQueryFilter(s => !s.IsDeleted);
             modelBuilder.Entity<BudgetPlan>().HasQueryFilter(b => !b.IsDeleted);
             modelBuilder.Entity<WishlistItem>().HasQueryFilter(w => !w.IsDeleted);
-            modelBuilder.Entity<Tag>().HasQueryFilter(t => !t.IsDeleted);
+            modelBuilder.Entity<TriggerType>().HasQueryFilter(t => !t.IsDeleted);
         }
     }
 }

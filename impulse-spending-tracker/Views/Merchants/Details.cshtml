@@ -64,8 +64,14 @@
     </div>
 
     <div class="details-actions">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit merchant</a>
-        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
+        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit merchant</a>
+        }
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
+        }
         <a asp-action="Index" class="btn btn-outline-primary">Back to list</a>
     </div>
 </div>

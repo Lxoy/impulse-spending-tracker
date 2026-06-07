@@ -1,4 +1,13 @@
 @model IEnumerable<BudgetPlan>
+@inject Microsoft.AspNetCore.Identity.UserManager<impulse_spending_tracker.Models.AppUser> UserManager
+@inject impulse_spending_tracker.Repositories.UserProfileRepository UserProfileRepository
+
+@{
+    var currentUserId = UserManager.GetUserId(User);
+    var currentProfile = UserProfileRepository.GetAll().FirstOrDefault(p => p.AppUserId == currentUserId);
+    var currentProfileId = currentProfile?.Id;
+    var isAdmin = User.IsInRole("Admin");
+}
 
 @foreach (var plan in Model)
 {
@@ -33,8 +42,11 @@
         <td class="text-end">
             <div class="d-inline-flex flex-wrap justify-content-end gap-2">
                 <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@plan.Id">Details</a>
-                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@plan.Id">Edit</a>
-                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@plan.Id">Delete</a>
+                @if (isAdmin || (currentProfileId.HasValue && plan.UserProfileId == currentProfileId.Value))
+                {
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@plan.Id">Edit</a>
+                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@plan.Id">Delete</a>
+                }
             </div>
         </td>
     </tr>

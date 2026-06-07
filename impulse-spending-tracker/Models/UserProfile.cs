@@ -31,6 +31,10 @@ namespace impulse_spending_tracker.Models
         [DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        // FK to Identity user
+        public string? AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
+
         public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
         public virtual ICollection<SpendingSession> Sessions { get; set; } = new List<SpendingSession>();
         public virtual ICollection<WishlistItem> WishlistItems { get; set; } = new List<WishlistItem>();

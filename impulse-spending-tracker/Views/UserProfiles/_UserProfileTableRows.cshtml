@@ -1,4 +1,6 @@
 @model IEnumerable<UserProfile>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<impulse_spending_tracker.Models.AppUser> UserManager
 
 @foreach (var user in Model)
 {
@@ -10,6 +12,11 @@
     };
 
     <tr>
+        @{
+            var isAdmin = User.IsInRole("Admin");
+            var currentUserId = UserManager.GetUserId(User);
+            var canManage = isAdmin || (!string.IsNullOrEmpty(currentUserId) && user.AppUserId == currentUserId);
+        }
         <td class="fw-semibold">
             <a class="index-link" asp-action="Details" asp-route-id="@user.Id">@user.FirstName @user.LastName</a>
         </td>
@@ -19,8 +26,11 @@
         <td class="text-end">
             <div class="d-inline-flex flex-wrap justify-content-end gap-2">
                 <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@user.Id">Details</a>
-                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
-                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@user.Id">Delete</a>
+                @if (canManage)
+                {
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@user.Id">Delete</a>
+                }
             </div>
         </td>
     </tr>

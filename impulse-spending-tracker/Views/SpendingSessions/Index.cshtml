@@ -23,7 +23,10 @@
             </div>
             <div class="index-hero__actions">
                 <span class="index-count-chip" id="spendingSessionCount" data-singular="session" data-plural="sessions">@Model.Count sessions</span>
-                <a class="btn btn-primary" asp-action="Create">Create session</a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-primary" asp-action="Create">Create session</a>
+                }
             </div>
         </div>
 

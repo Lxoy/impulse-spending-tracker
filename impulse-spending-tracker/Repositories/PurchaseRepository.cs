@@ -19,6 +19,7 @@ namespace impulse_spending_tracker.Repositories
                 .AsNoTracking()
                 .Include(p => p.UserProfile)
                 .Include(p => p.Merchant)
+                .Include(p => p.TriggerTypeTag)
                 .ToList();
         }
 
@@ -28,7 +29,15 @@ namespace impulse_spending_tracker.Repositories
                 .AsNoTracking()
                 .Include(p => p.UserProfile)
                 .Include(p => p.Merchant)
-                .Include(p => p.Tags)
+                .Include(p => p.TriggerTypeTag)
+                .Include(p => p.TriggerTypes)
+                .SingleOrDefault(p => p.Id == id);
+        }
+
+        public Purchase? GetByIdBasic(int id)
+        {
+            return _dbContext.Purchases
+                .AsNoTracking()
                 .SingleOrDefault(p => p.Id == id);
         }
 
@@ -38,16 +47,61 @@ namespace impulse_spending_tracker.Repositories
             _dbContext.SaveChanges();
         }
 
+        public bool IsWishlistItemLinked(int wishlistItemId, int? excludedPurchaseId = null)
+        {
+            return _dbContext.Purchases
+                .IgnoreQueryFilters()
+                .Any(purchase =>
+                    purchase.WishlistItemId == wishlistItemId &&
+                    (!excludedPurchaseId.HasValue || purchase.Id != excludedPurchaseId.Value));
+        }
+
+        public decimal GetBudgetPlanSpentAmount(int budgetPlanId, int? excludedPurchaseId = null)
+        {
+            return _dbContext.Purchases
+                .IgnoreQueryFilters()
+                .Where(purchase =>
+                    purchase.BudgetPlanId == budgetPlanId &&
+                    (!excludedPurchaseId.HasValue || purchase.Id != excludedPurchaseId.Value))
+                .Select(purchase => (decimal?)purchase.Amount)
+                .Sum() ?? 0m;
+        }
+
         public void Update(Purchase purchase)
         {
-            _dbContext.Purchases.Update(purchase);
+            var existing = _dbContext.Purchases.SingleOrDefault(p => p.Id == purchase.Id);
+            if (existing is null)
+            {
+                throw new InvalidOperationException($"Purchase with id {purchase.Id} was not found.");
+            }
+
+            existing.UserProfileId = purchase.UserProfileId;
+            existing.MerchantId = purchase.MerchantId;
+            existing.SpendingSessionId = purchase.SpendingSessionId;
+            existing.BudgetPlanId = purchase.BudgetPlanId;
+            existing.WishlistItemId = purchase.WishlistItemId;
+            existing.Title = purchase.Title;
+            existing.Amount = purchase.Amount;
+            existing.Currency = purchase.Currency;
+            existing.PurchasedAt = purchase.PurchasedAt;
+            existing.MoodBeforePurchase = purchase.MoodBeforePurchase;
+            existing.NeedLevel = purchase.NeedLevel;
+            existing.TriggerType = purchase.TriggerType;
+            existing.Installments = purchase.Installments;
+            existing.Notes = purchase.Notes;
+
             _dbContext.SaveChanges();
         }
 
         public void Delete(Purchase purchase)
         {
-            purchase.IsDeleted = true;
-            _dbContext.Purchases.Update(purchase);
+            var existing = _dbContext.Purchases.SingleOrDefault(item => item.Id == purchase.Id);
+            if (existing is null)
+            {
+                throw new InvalidOperationException($"Purchase with id {purchase.Id} was not found.");
+            }
+
+            existing.IsDeleted = true;
             _dbContext.SaveChanges();
         }
     }

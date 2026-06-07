@@ -322,6 +322,8 @@ function initializeAjaxFilter(searchInput) {
 	const emptyMessage = searchInput.dataset.emptyMessage || 'No matching results.';
 	const columnCount = Number(searchInput.dataset.columnCount || '1');
 	const resultsSurface = tableBody.closest('.index-surface, .table-responsive') || tableBody;
+	const responseFormat = (searchInput.dataset.responseFormat || '').toLowerCase();
+	const rowRendererName = (searchInput.dataset.rowRenderer || '').toLowerCase();
 
 	let activeRequest = null;
 	let requestSequence = 0;
@@ -334,6 +336,45 @@ function initializeAjaxFilter(searchInput) {
 
 	function renderEmptyState() {
 		return `<tr class="anim-empty-enter"><td colspan="${columnCount}" class="text-center text-muted py-4">${emptyMessage}</td></tr>`;
+	}
+
+	function escapeHtml(value) {
+		return String(value ?? '')
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#39;');
+	}
+
+	function renderApiRows(items) {
+		if (!Array.isArray(items) || items.length === 0) {
+			return renderEmptyState();
+		}
+
+		if (rowRendererName === 'merchant') {
+			return items.map(function (merchant) {
+				const channelClass = merchant.isOnlineOnly ? 'list-signal list-signal--info' : 'list-signal list-signal--brand';
+				const channelText = merchant.isOnlineOnly ? 'Online' : 'Online + Store';
+				return [
+					'<tr>',
+					`<td class="fw-semibold"><a class="index-link" href="/Merchants/Details/${merchant.id}">${escapeHtml(merchant.name)}</a></td>`,
+					`<td>${escapeHtml(merchant.category)}</td>`,
+					`<td>${escapeHtml(merchant.countryCode)}</td>`,
+					`<td><span class="${channelClass}">${channelText}</span></td>`,
+					'<td class="text-end">',
+					'<div class="d-inline-flex flex-wrap justify-content-end gap-2">',
+					`<a class="btn btn-sm btn-outline-primary" href="/Merchants/Details/${merchant.id}">Details</a>`,
+					`<a class="btn btn-sm btn-outline-secondary" href="/Merchants/Edit/${merchant.id}">Edit</a>`,
+					`<a class="btn btn-sm btn-outline-danger" href="/Merchants/Delete/${merchant.id}">Delete</a>`,
+					'</div>',
+					'</td>',
+					'</tr>'
+				].join('');
+			}).join('');
+		}
+
+		return renderEmptyState();
 	}
 
 	function setLoadingState(isLoading) {
@@ -402,11 +443,22 @@ function initializeAjaxFilter(searchInput) {
 				return;
 			}
 
-			const html = (await response.text()).trim();
-			const preview = document.createElement('tbody');
-			preview.innerHTML = html;
-			const rowCount = preview.querySelectorAll('tr').length;
-			const renderedHtml = rowCount > 0 ? html : renderEmptyState();
+			const contentType = (response.headers.get('content-type') || '').toLowerCase();
+			const shouldParseJson = responseFormat === 'json' || contentType.includes('application/json');
+			let renderedHtml;
+			let rowCount;
+
+			if (shouldParseJson) {
+				const items = await response.json();
+				rowCount = Array.isArray(items) ? items.length : 0;
+				renderedHtml = renderApiRows(items);
+			} else {
+				const html = (await response.text()).trim();
+				const preview = document.createElement('tbody');
+				preview.innerHTML = html;
+				rowCount = preview.querySelectorAll('tr').length;
+				renderedHtml = rowCount > 0 ? html : renderEmptyState();
+			}
 
 			await replaceTableContent(renderedHtml);
 			updateCount(rowCount);

@@ -47,7 +47,7 @@ body {
   margin-top: 0.9rem;
   margin-left: auto;
   margin-right: auto;
-  width: min(1120px, calc(100% - 1.4rem));
+  width: min(1280px, calc(100% - 1.4rem));
   border: 1px solid rgba(216, 212, 199, 0.95);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.86) !important;
@@ -67,6 +67,7 @@ body {
 .app-navbar .container,
 .app-navbar .container-fluid {
   padding-inline: 1rem;
+  min-height: 4.9rem;
 }
 
 .app-brand {
@@ -131,10 +132,16 @@ body {
 
 .app-navbar__collapse {
   gap: 0.75rem;
+  align-items: center;
 }
 
 .app-nav {
   gap: 0.2rem;
+}
+
+.app-nav .nav-item {
+  display: flex;
+  align-items: center;
 }
 
 .app-nav--primary {
@@ -144,6 +151,36 @@ body {
 .app-nav--secondary {
   padding-left: 0.6rem;
   border-left: 1px solid rgba(216, 212, 199, 0.95);
+}
+
+.app-nav--auth {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-nav--auth .nav-link {
+  padding: 0.42rem 0.62rem;
+}
+
+.app-nav__greeting,
+.app-nav__logout {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.35rem;
+  line-height: 1.1;
+}
+
+.app-nav__logout {
+  border: 0;
+  background: transparent;
+  text-decoration: none;
+}
+
+.app-nav__logout:hover,
+.app-nav__logout:focus-visible {
+  background-color: var(--ui-surface-soft);
 }
 
 .app-nav .nav-link {
@@ -361,6 +398,8 @@ main > .container-fluid {
     display: none;
   }
 
+
+  
   .app-navbar__collapse {
     margin-top: 0.7rem;
     border-top: 1px solid rgba(216, 212, 199, 0.95);

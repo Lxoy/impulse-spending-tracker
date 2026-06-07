@@ -16,8 +16,14 @@
         <td class="text-end">
             <div class="d-inline-flex flex-wrap justify-content-end gap-2">
                 <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@merchant.Id">Details</a>
-                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@merchant.Id">Edit</a>
-                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@merchant.Id">Delete</a>
+                @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                {
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@merchant.Id">Edit</a>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@merchant.Id">Delete</a>
+                }
             </div>
         </td>
     </tr>

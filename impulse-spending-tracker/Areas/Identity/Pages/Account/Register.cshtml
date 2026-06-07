@@ -1,0 +1,95 @@
+@page
+@model impulse_spending_tracker.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Spendora";
+}
+
+<div class="form-shell">
+    <div class="row g-4 align-items-center justify-content-center">
+        <div class="col-12 col-lg-5">
+            <div class="p-4 rounded-3" style="background: linear-gradient(180deg, rgba(15,118,110,0.08), rgba(15,118,110,0.03));">
+                <div class="d-flex align-items-center gap-3">
+                    <a class="app-brand" asp-area="" asp-controller="Home" asp-action="Index" style="text-decoration:none;">
+                        <span class="app-brand__mark" aria-hidden="true">S</span>
+                        <span class="app-brand__text" style="margin-left:0.6rem;">
+                            <span class="app-brand__title">Spendora</span>
+                        </span>
+                    </a>
+                </div>
+                <div class="mt-3">
+                    <p class="text-muted mb-2">Register quickly and securely. We only store the information required to personalise your experience.</p>
+                    <ul class="list-unstyled small text-muted mb-0">
+                        <li>• Private by design — your data isn't shared.</li>
+                        <li>• Fast onboarding — one-minute setup.</li>
+                        <li>• Use your email to sign in across devices.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-7">
+            <section class="form-surface card border-0 shadow-sm mx-auto">
+                <div class="card-body p-4 p-md-5">
+                    <form method="post" class="form-grid row g-3" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Input.FirstName" class="form-label">First name</label>
+                            <input asp-for="Input.FirstName" class="form-control" placeholder="e.g., Jane" />
+                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Input.LastName" class="form-label">Last name</label>
+                            <input asp-for="Input.LastName" class="form-control" placeholder="e.g., Doe" />
+                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            @await Html.PartialAsync("_DatePickerControl", Model.Input?.DateOfBirth ?? DateTime.MinValue, new ViewDataDictionary(ViewData) { { "For", "Input.DateOfBirth" }, { "Label", "Date of Birth" } })
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Input.Email" class="form-label">Email</label>
+                            <input asp-for="Input.Email" class="form-control" placeholder="e.g., jane.doe@example.com" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Input.OIB" class="form-label">OIB</label>
+                            <input asp-for="Input.OIB" class="form-control" placeholder="e.g., 12345678901 (optional)" />
+                            <span asp-validation-for="Input.OIB" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Input.JMBG" class="form-label">JMBG</label>
+                            <input asp-for="Input.JMBG" class="form-control" placeholder="e.g., 0101703500000 (optional)" />
+                            <span asp-validation-for="Input.JMBG" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Input.Password" class="form-label">Password</label>
+                            <input asp-for="Input.Password" class="form-control" placeholder="Create a password" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Input.ConfirmPassword" class="form-label">Confirm password</label>
+                            <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirm password" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 form-actions d-flex flex-wrap gap-2 pt-2">
+                            <button type="submit" class="btn btn-primary">Create account</button>
+                            <a class="btn btn-outline-secondary" asp-area="Identity" asp-page="/Account/Login">Already have an account?</a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -14,6 +14,7 @@
     var includeTime = (bool?)ViewData["IncludeTime"] ?? false;
     var validationFrom = ViewData["ValidationFrom"] as string;
     var validationMessage = ViewData["ValidationMessage"] as string;
+    var maxDate = ViewData["MaxDate"] as string;
 
     // If no DisplayName was provided, humanize the property name
     if (!string.IsNullOrEmpty(inputName) && string.Equals(displayName, inputName, StringComparison.Ordinal))
@@ -53,7 +54,8 @@
             value="@(value is DateTime dt && dt > DateTime.MinValue ? dt.ToString("s") : String.Empty)"
             class="date-picker-value"
             data-hidden-value
-            @(validationFrom is string && !string.IsNullOrEmpty(validationMessage) ? $"data-val=\"true\" data-val-daterange=\"{validationMessage}\" data-val-daterange-from=\"{validationFrom}\" data-val-daterange-to=\"{inputName}\"" : String.Empty) />
+            @(validationFrom is string && !string.IsNullOrEmpty(validationMessage) ? $"data-val=\"true\" data-val-daterange=\"{validationMessage}\" data-val-daterange-from=\"{validationFrom}\" data-val-daterange-to=\"{inputName}\"" : String.Empty)
+            @( !string.IsNullOrEmpty(maxDate) ? $" data-max-date=\"{maxDate}\"" : String.Empty) />
     </div>
     <div class="date-picker-calendar" data-calendar hidden></div>
     @Html.ValidationMessage(inputName, string.Empty, new { @class = "text-danger" })

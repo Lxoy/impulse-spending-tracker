@@ -16,6 +16,11 @@
     <section class="form-hero mb-3">
         <p class="form-kicker">Spending Sessions</p>
         <h1 class="form-title">Create Spending Session</h1>
+        @if (!User.IsInRole("Admin") && ViewBag.CurrentUserProfile != null)
+        {
+            var cur = ViewBag.CurrentUserProfile as dynamic;
+            <p class="form-kicker text-muted small mb-1">@($"{cur.FirstName} {cur.LastName} ({cur.Email})")</p>
+        }
         <p class="form-subtitle">Register a new browsing and checkout timeline.</p>
     </section>
 
@@ -24,17 +29,24 @@
             <form asp-action="Create" method="post" class="form-grid row g-3" novalidate>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <div class="col-12 col-md-6 position-relative">
-                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
-                    {
-                        InputName = nameof(Model.UserProfileId),
-                        ValidationMessageFor = nameof(Model.UserProfileId),
-                        Label = "User",
-                        Placeholder = "Search users...",
-                        SearchUrl = Url.Action("Users", "Lookup") ?? "/lookup/users",
-                        EmptyMessage = "No users found."
-                    })
-                </div>
+                @if (ViewBag.ShowUserSelector == true)
+                {
+                    <div class="col-12 col-md-6 position-relative">
+                        @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                        {
+                            InputName = nameof(Model.UserProfileId),
+                            ValidationMessageFor = nameof(Model.UserProfileId),
+                            Label = "User",
+                            Placeholder = "Search users...",
+                            SearchUrl = Url.Action("Users", "Lookup") ?? "/lookup/users",
+                            EmptyMessage = "No users found."
+                        })
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="UserProfileId" />
+                }
                 <div class="col-12 col-md-6">
                     @await Html.PartialAsync("_DatePickerControl", Model.EndedAt, new ViewDataDictionary(ViewData) { { "IncludeTime", true }, { "For", nameof(Model.EndedAt) } })
                 </div>

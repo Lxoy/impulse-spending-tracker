@@ -2,25 +2,25 @@ using impulse_spending_tracker.Models;
 
 namespace impulse_spending_tracker.Repositories
 {
-    public class TagMockRepository
+    public class TriggerTypeMockRepository
     {
-        private readonly List<Tag> _tags;
+        private readonly List<TriggerType> _tags;
 
-        public TagMockRepository(List<UserProfile> users)
+        public TriggerTypeMockRepository(List<UserProfile> users)
         {
             _tags = users
                 .SelectMany(u => u.Purchases)
-                .SelectMany(p => p.Tags)
+                .SelectMany(p => p.TriggerTypes)
                 .DistinctBy(t => t.Id)
                 .ToList();
         }
 
-        public IReadOnlyList<Tag> GetAll()
+        public IReadOnlyList<TriggerType> GetAll()
         {
             return _tags;
         }
 
-        public Tag? GetById(int id)
+        public TriggerType? GetById(int id)
         {
             return _tags.SingleOrDefault(t => t.Id == id);
         }

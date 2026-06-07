@@ -23,7 +23,10 @@
             </div>
             <div class="index-hero__actions">
                 <span class="index-count-chip" id="wishlistItemCount" data-singular="item" data-plural="items">@Model.Count items</span>
-                <a class="btn btn-primary" asp-action="Create">Create wishlist item</a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-primary" asp-action="Create">Create wishlist item</a>
+                }
             </div>
         </div>
 

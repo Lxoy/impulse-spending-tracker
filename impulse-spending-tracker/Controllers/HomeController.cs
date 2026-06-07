@@ -4,6 +4,7 @@ using System.Linq;
 using impulse_spending_tracker.Data;
 using impulse_spending_tracker.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace impulse_spending_tracker.Controllers
 {
@@ -20,12 +21,13 @@ namespace impulse_spending_tracker.Controllers
         [HttpGet("")]
         public IActionResult Index()
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var startOfMonth = new DateTime(now.Year, now.Month, 1);
             var startOfPreviousMonth = startOfMonth.AddMonths(-1);
             var startOfLastSevenDays = now.AddDays(-7);
 
             var purchases = _db.Purchases
+                .Include(p => p.TriggerTypeTag)
                 .Where(p => p.PurchasedAt >= startOfMonth && p.PurchasedAt <= now);
             var monthPurchases = purchases.ToList();
 
@@ -53,7 +55,7 @@ namespace impulse_spending_tracker.Controllers
                     : "No purchase data yet";
 
             var grouped = purchases
-                .GroupBy(p => p.TriggerType)
+                .GroupBy(p => p.TriggerTypeTag != null ? p.TriggerTypeTag.Name : p.TriggerType.ToString())
                 .Select(g => new { Trigger = g.Key, Amount = g.Sum(p => p.Amount), Count = g.Count() })
                 .OrderByDescending(x => x.Amount)
                 .ToList();
@@ -79,7 +81,7 @@ namespace impulse_spending_tracker.Controllers
             {
                 vm.Items.Add(new ImpulsePulseViewModel.PulseItem
                 {
-                    TriggerType = g.Trigger,
+                    TriggerType = ImpulseTriggerType.Other,
                     Label = g.Trigger.ToString(),
                     Amount = g.Amount,
                     Count = g.Count,
@@ -90,6 +92,32 @@ namespace impulse_spending_tracker.Controllers
             vm.TopTriggerLabel = vm.Items.FirstOrDefault()?.Label ?? "—";
 
             return View(vm);
+        }
+
+        [HttpGet("trigger-heatmap-data")]
+        public IActionResult TriggerHeatmapData()
+        {
+            var now = DateTime.Now.Date.AddDays(1).AddTicks(-1);
+            var start = now.AddDays(-29).Date; // last 30 days inclusive
+
+            var data = _db.Purchases
+                .Where(p => p.PurchasedAt >= start && p.PurchasedAt <= now)
+                .GroupBy(p => p.PurchasedAt.Date)
+                .Select(g => new { Day = g.Key, Count = g.Count() })
+                .ToList()
+                .Select(x => new { day = x.Day.ToString("yyyy-MM-dd"), count = x.Count })
+                .ToList();
+
+            // ensure all 30 days present (zero for missing)
+            var result = new List<object>();
+            for (int i = 0; i < 30; i++)
+            {
+                var d = start.AddDays(i);
+                var found = data.FirstOrDefault(x => x.day == d.ToString("yyyy-MM-dd"));
+                result.Add(new { day = d.ToString("yyyy-MM-dd"), count = found?.count ?? 0 });
+            }
+
+            return Json(result);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

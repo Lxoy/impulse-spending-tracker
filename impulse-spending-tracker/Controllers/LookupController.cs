@@ -1,8 +1,10 @@
 using impulse_spending_tracker.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace impulse_spending_tracker.Controllers
 {
+    [Authorize]
     [Route("lookup")]
     public class LookupController : Controller
     {

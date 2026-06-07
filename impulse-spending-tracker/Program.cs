@@ -1,25 +1,64 @@
 using impulse_spending_tracker.Data;
 using impulse_spending_tracker.Models;
 using impulse_spending_tracker.Repositories;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
-var connectionString = builder.Configuration.GetConnectionString("ImpulseSpendingDbContext")
-    ?? throw new InvalidOperationException("Connection string 'ImpulseSpendingDbContext' is missing.");
+if (builder.Environment.IsEnvironment("Testing"))
+{
+    builder.Services.AddDbContext<ImpulseSpendingDbContext>(options =>
+        options.UseInMemoryDatabase("ImpulseSpendingTests"));
+}
+else
+{
+    var connectionString = builder.Configuration.GetConnectionString("ImpulseSpendingDbContext")
+        ?? throw new InvalidOperationException("Connection string 'ImpulseSpendingDbContext' is missing.");
 
-builder.Services.AddDbContext<ImpulseSpendingDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    builder.Services.AddDbContext<ImpulseSpendingDbContext>(options =>
+        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+}
+
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+
+if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret))
+{
+    builder.Services.AddAuthentication()
+        .AddGoogle(options =>
+        {
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+            options.SignInScheme = IdentityConstants.ExternalScheme;
+        });
+}
+
+builder.Services
+    .AddDefaultIdentity<AppUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 6;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ImpulseSpendingDbContext>();
 
 builder.Services.AddScoped<UserProfileRepository>();
 builder.Services.AddScoped<BudgetPlanRepository>();
 builder.Services.AddScoped<MerchantRepository>();
 builder.Services.AddScoped<PurchaseRepository>();
+builder.Services.AddScoped<PurchaseAttachmentRepository>();
 builder.Services.AddScoped<SpendingSessionRepository>();
-builder.Services.AddScoped<TagRepository>();
+builder.Services.AddScoped<TriggerTypeRepository>();
 builder.Services.AddScoped<WishlistItemRepository>();
 
 var app = builder.Build();
@@ -35,15 +74,21 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
+// Require users to set MonthlyNetIncome before accessing app pages
+app.UseMiddleware<impulse_spending_tracker.Middleware.RequireIncomeMiddleware>();
 app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapControllers();
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+await IdentitySeeder.SeedAsync(app.Services);
 
 
 app.Run();
@@ -60,7 +105,7 @@ void RunLab1LinqQueries(List<UserProfile> users, ILogger logger)
         .ToList();
 
     var stressTriggeredPurchases = allPurchases
-        .Where(p => p.TriggerType == ImpulseTriggerType.Stress || p.Tags.Any(t => t.Name == "Stress Buy"))
+        .Where(p => p.TriggerType == ImpulseTriggerType.Stress || p.TriggerTypes.Any(t => t.Name == "Stress Buy"))
         .ToList();
 
     var topPurchase = allPurchases
@@ -188,9 +233,9 @@ List<UserProfile> BuildLab1Users()
         AverageDeliveryDays = 5
     };
 
-    var stressTag = new Tag { Name = "Stress Buy", ColorHex = "#D9534F", Description = "Kupnja pod stresom" };
-    var saleTag = new Tag { Name = "Flash Sale", ColorHex = "#F0AD4E", Description = "Kupnja zbog hitne akcije" };
-    var socialTag = new Tag { Name = "Social Influence", ColorHex = "#5BC0DE", Description = "Kupnja nakon sadržaja s društvenih mreža" };
+    var stressTag = new TriggerType { Name = "Stress Buy", ColorHex = "#D9534F", Description = "Kupnja pod stresom" };
+    var saleTag = new TriggerType { Name = "Flash Sale", ColorHex = "#F0AD4E", Description = "Kupnja zbog hitne akcije" };
+    var socialTag = new TriggerType { Name = "Social Influence", ColorHex = "#5BC0DE", Description = "Kupnja nakon sadržaja s društvenih mreža" };
 
     var user1 = new UserProfile
     {
@@ -268,7 +313,7 @@ List<UserProfile> BuildLab1Users()
         TriggerType = ImpulseTriggerType.SocialMedia,
         Installments = 1,
         Notes = "Kupnja odmah nakon oglasa i recenzije influencera",
-        Tags = new List<Tag> { stressTag, socialTag }
+        TriggerTypes = new List<TriggerType> { stressTag, socialTag }
     };
 
     var user2 = new UserProfile
@@ -347,7 +392,7 @@ List<UserProfile> BuildLab1Users()
         TriggerType = ImpulseTriggerType.FlashSale,
         Installments = 2,
         Notes = "30% popusta i odbrojavanje akcije",
-        Tags = new List<Tag> { saleTag }
+        TriggerTypes = new List<TriggerType> { saleTag }
     };
 
     var user3 = new UserProfile
@@ -426,7 +471,7 @@ List<UserProfile> BuildLab1Users()
         TriggerType = ImpulseTriggerType.Recommendation,
         Installments = 3,
         Notes = "Kupnja nakon email preporuke i ograničene zalihe",
-        Tags = new List<Tag> { stressTag, saleTag }
+        TriggerTypes = new List<TriggerType> { stressTag, saleTag }
     };
 
     user1.BudgetPlans.Add(user1Plan);
@@ -467,4 +512,25 @@ List<UserProfile> BuildLab1Users()
     socialTag.Purchases.Add(user1Purchase);
 
     return new List<UserProfile> { user1, user2, user3 };
+}
+
+static class IdentitySeeder
+{
+    public static async Task SeedAsync(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        foreach (var roleName in new[] { "Admin", "Manager", "User" })
+        {
+            if (!await roleManager.RoleExistsAsync(roleName))
+            {
+                await roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+        }
+    }
+}
+
+public partial class Program
+{
 }
