@@ -10,10 +10,14 @@ namespace impulse_spending_tracker.Controllers
     public class TriggerTypesController : Controller
     {
         private readonly TriggerTypeRepository _tagRepository;
+        private readonly ILogger<TriggerTypesController> _logger;
 
-        public TriggerTypesController(TriggerTypeRepository tagRepository)
+        public TriggerTypesController(
+            TriggerTypeRepository tagRepository,
+            ILogger<TriggerTypesController> logger)
         {
             _tagRepository = tagRepository;
+            _logger = logger;
         }
 
         [HttpGet("")]
@@ -24,6 +28,7 @@ namespace impulse_spending_tracker.Controllers
                 .OrderBy(t => t.Name)
                 .ToList();
 
+            _logger.LogInformation("Loaded {Count} trigger types.", tags.Count);
             return View(tags);
         }
 
@@ -46,6 +51,7 @@ namespace impulse_spending_tracker.Controllers
             var tag = _tagRepository.GetById(id);
             if (tag is null)
             {
+                _logger.LogWarning("Trigger type details requested for missing id {TriggerTypeId}.", id);
                 return NotFound();
             }
 
@@ -67,10 +73,12 @@ namespace impulse_spending_tracker.Controllers
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Trigger type create validation failed for {TriggerTypeName}.", tag.Name);
                 return View(tag);
             }
 
             _tagRepository.Create(tag);
+            _logger.LogInformation("Trigger type {TriggerTypeId} created: {TriggerTypeName}.", tag.Id, tag.Name);
             return RedirectToAction(nameof(Index));
         }
 
@@ -81,6 +89,7 @@ namespace impulse_spending_tracker.Controllers
             var tag = _tagRepository.GetById(id);
             if (tag is null)
             {
+                _logger.LogWarning("Trigger type edit requested for missing id {TriggerTypeId}.", id);
                 return NotFound();
             }
 
@@ -94,10 +103,12 @@ namespace impulse_spending_tracker.Controllers
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Trigger type edit validation failed for id {TriggerTypeId}.", tag.Id);
                 return View(tag);
             }
 
             _tagRepository.Update(tag);
+            _logger.LogInformation("Trigger type {TriggerTypeId} updated.", tag.Id);
             return RedirectToAction(nameof(Details), new { id = tag.Id });
         }
 
@@ -108,6 +119,7 @@ namespace impulse_spending_tracker.Controllers
             var tag = _tagRepository.GetById(id);
             if (tag is null)
             {
+                _logger.LogWarning("Trigger type delete requested for missing id {TriggerTypeId}.", id);
                 return NotFound();
             }
 
@@ -122,16 +134,19 @@ namespace impulse_spending_tracker.Controllers
             var tag = _tagRepository.GetById(model.Id);
             if (tag is null)
             {
+                _logger.LogWarning("Trigger type delete submitted for missing id {TriggerTypeId}.", model.Id);
                 return NotFound();
             }
 
             try
             {
                 _tagRepository.Delete(tag);
+                _logger.LogInformation("Trigger type {TriggerTypeId} deleted.", tag.Id);
                 return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
+                _logger.LogWarning(ex, "Trigger type {TriggerTypeId} could not be deleted because it is used by purchases.", tag.Id);
                 ModelState.AddModelError(string.Empty, "Unable to delete this trigger type because it is used by purchases.");
                 return View(tag);
             }

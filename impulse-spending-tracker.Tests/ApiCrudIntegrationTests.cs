@@ -248,7 +248,7 @@ public sealed class MerchantsApiControllerTests : ApiCrudIntegrationTestsBase
     }
 }
 
-public sealed class TagsApiControllerTests : ApiCrudIntegrationTestsBase
+public sealed class TriggerTypesApiControllerTests : ApiCrudIntegrationTestsBase
 {
     [Fact]
     public async Task CrudFlow_Works()
@@ -265,17 +265,17 @@ public sealed class TagsApiControllerTests : ApiCrudIntegrationTestsBase
         });
 
         var client = factory.CreateClient();
-        var allResponse = await client.GetAsync("/api/tags");
+        var allResponse = await client.GetAsync("/api/trigger-types");
         Assert.Equal(HttpStatusCode.OK, allResponse.StatusCode);
 
         var allItems = await ReadJsonAsync<List<TriggerTypeDto>>(allResponse);
         Assert.NotNull(allItems);
         Assert.Single(allItems!);
 
-        var getByIdResponse = await client.GetAsync($"/api/tags/{allItems![0].Id}");
+        var getByIdResponse = await client.GetAsync($"/api/trigger-types/{allItems![0].Id}");
         Assert.Equal(HttpStatusCode.OK, getByIdResponse.StatusCode);
 
-        var createResponse = await client.PostAsJsonAsync("/api/tags", new TriggerTypeUpsertDto
+        var createResponse = await client.PostAsJsonAsync("/api/trigger-types", new TriggerTypeUpsertDto
         {
             Name = "Flash Sale",
             ColorHex = "#F0AD4E",
@@ -287,7 +287,7 @@ public sealed class TagsApiControllerTests : ApiCrudIntegrationTestsBase
         Assert.NotNull(created);
         Assert.Equal("Flash Sale", created!.Name);
 
-        var updateResponse = await client.PutAsJsonAsync($"/api/tags/{created.Id}", new TriggerTypeUpsertDto
+        var updateResponse = await client.PutAsJsonAsync($"/api/trigger-types/{created.Id}", new TriggerTypeUpsertDto
         {
             Name = "Flash Sale Updated",
             ColorHex = "#5BC0DE",
@@ -299,10 +299,10 @@ public sealed class TagsApiControllerTests : ApiCrudIntegrationTestsBase
         Assert.NotNull(updated);
         Assert.Equal("Flash Sale Updated", updated!.Name);
 
-        var deleteResponse = await client.DeleteAsync($"/api/tags/{created.Id}");
+        var deleteResponse = await client.DeleteAsync($"/api/trigger-types/{created.Id}");
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
 
-        var deletedLookup = await client.GetAsync($"/api/tags/{created.Id}");
+        var deletedLookup = await client.GetAsync($"/api/trigger-types/{created.Id}");
         Assert.Equal(HttpStatusCode.NotFound, deletedLookup.StatusCode);
 
         using var scope = factory.Services.CreateScope();
@@ -317,7 +317,7 @@ public sealed class TagsApiControllerTests : ApiCrudIntegrationTestsBase
         using var factory = new ApiTestFactory();
         var client = factory.CreateClient();
 
-        var response = await client.GetAsync("/api/tags/999999");
+        var response = await client.GetAsync("/api/trigger-types/999999");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -328,7 +328,7 @@ public sealed class TagsApiControllerTests : ApiCrudIntegrationTestsBase
         using var factory = new ApiTestFactory();
         var client = factory.CreateClient();
 
-        var response = await client.PostAsJsonAsync("/api/tags", new TriggerTypeUpsertDto
+        var response = await client.PostAsJsonAsync("/api/trigger-types", new TriggerTypeUpsertDto
         {
             Name = "A",
             ColorHex = "red",

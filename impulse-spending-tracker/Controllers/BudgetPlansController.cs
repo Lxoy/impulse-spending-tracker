@@ -13,15 +13,18 @@ namespace impulse_spending_tracker.Controllers
         private readonly BudgetPlanRepository _budgetPlanRepository;
         private readonly UserProfileRepository _userProfileRepository;
         private readonly Microsoft.AspNetCore.Identity.UserManager<impulse_spending_tracker.Models.AppUser> _userManager;
+        private readonly ILogger<BudgetPlansController> _logger;
 
         public BudgetPlansController(
             BudgetPlanRepository budgetPlanRepository,
             UserProfileRepository userProfileRepository,
-            Microsoft.AspNetCore.Identity.UserManager<impulse_spending_tracker.Models.AppUser> userManager)
+            Microsoft.AspNetCore.Identity.UserManager<impulse_spending_tracker.Models.AppUser> userManager,
+            ILogger<BudgetPlansController> logger)
         {
             _budgetPlanRepository = budgetPlanRepository;
             _userProfileRepository = userProfileRepository;
             _userManager = userManager;
+            _logger = logger;
         }
 
         [Authorize]
@@ -37,11 +40,16 @@ namespace impulse_spending_tracker.Controllers
                     .ThenBy(p => p.Name)
                     .ToList();
 
+                _logger.LogInformation("Admin loaded {Count} budget plans.", plans.Count);
                 return View(plans);
             }
 
             var profileId = GetCurrentUserProfileId();
-            if (!profileId.HasValue) return Forbid();
+            if (!profileId.HasValue)
+            {
+                _logger.LogWarning("Budget plans index forbidden because current user has no profile.");
+                return Forbid();
+            }
 
             var plansForUser = _budgetPlanRepository
                 .GetAll()
@@ -51,6 +59,7 @@ namespace impulse_spending_tracker.Controllers
                 .ThenBy(p => p.Name)
                 .ToList();
 
+            _logger.LogInformation("User profile {UserProfileId} loaded {Count} budget plans.", profileId.Value, plansForUser.Count);
             return View(plansForUser);
         }
 
@@ -92,8 +101,16 @@ namespace impulse_spending_tracker.Controllers
         public IActionResult Details(int id)
         {
             var plan = _budgetPlanRepository.GetById(id);
-            if (plan is null) return NotFound();
-            if (!CanManagePlan(plan)) return Forbid();
+            if (plan is null)
+            {
+                _logger.LogWarning("Budget plan details requested for missing id {BudgetPlanId}.", id);
+                return NotFound();
+            }
+            if (!CanManagePlan(plan))
+            {
+                _logger.LogWarning("Budget plan {BudgetPlanId} details forbidden for current user.", id);
+                return Forbid();
+            }
             return View(plan);
         }
 
@@ -194,6 +211,7 @@ namespace impulse_spending_tracker.Controllers
             }
 
             _budgetPlanRepository.Create(plan);
+            _logger.LogInformation("Budget plan {BudgetPlanId} created for user profile {UserProfileId}.", plan.Id, plan.UserProfileId);
             return RedirectToAction(nameof(Index));
         }
 
@@ -204,10 +222,15 @@ namespace impulse_spending_tracker.Controllers
             var plan = _budgetPlanRepository.GetById(id);
             if (plan is null)
             {
+                _logger.LogWarning("Budget plan edit requested for missing id {BudgetPlanId}.", id);
                 return NotFound();
             }
 
-            if (!CanManagePlan(plan)) return Forbid();
+            if (!CanManagePlan(plan))
+            {
+                _logger.LogWarning("Budget plan {BudgetPlanId} edit forbidden for current user.", id);
+                return Forbid();
+            }
             if (User.IsInRole("Admin")) LoadDropdownData();
             else
             {
@@ -223,8 +246,16 @@ namespace impulse_spending_tracker.Controllers
         public IActionResult Edit(Models.BudgetPlan plan)
         {
             var existing = _budgetPlanRepository.GetById(plan.Id);
-            if (existing is null) return NotFound();
-            if (!CanManagePlan(existing)) return Forbid();
+            if (existing is null)
+            {
+                _logger.LogWarning("Budget plan edit submitted for missing id {BudgetPlanId}.", plan.Id);
+                return NotFound();
+            }
+            if (!CanManagePlan(existing))
+            {
+                _logger.LogWarning("Budget plan {BudgetPlanId} edit submit forbidden for current user.", plan.Id);
+                return Forbid();
+            }
 
             // Prevent non-admins from changing ownership
             if (!User.IsInRole("Admin")) plan.UserProfileId = existing.UserProfileId;
@@ -238,6 +269,7 @@ namespace impulse_spending_tracker.Controllers
             }
 
             _budgetPlanRepository.Update(plan);
+            _logger.LogInformation("Budget plan {BudgetPlanId} updated.", plan.Id);
             return RedirectToAction(nameof(Details), new { id = plan.Id });
         }
 
@@ -246,8 +278,16 @@ namespace impulse_spending_tracker.Controllers
         public IActionResult Delete(int id)
         {
             var plan = _budgetPlanRepository.GetById(id);
-            if (plan is null) return NotFound();
-            if (!CanManagePlan(plan)) return Forbid();
+            if (plan is null)
+            {
+                _logger.LogWarning("Budget plan delete requested for missing id {BudgetPlanId}.", id);
+                return NotFound();
+            }
+            if (!CanManagePlan(plan))
+            {
+                _logger.LogWarning("Budget plan {BudgetPlanId} delete forbidden for current user.", id);
+                return Forbid();
+            }
             return View(plan);
         }
 
@@ -257,16 +297,26 @@ namespace impulse_spending_tracker.Controllers
         public IActionResult Delete(Models.BudgetPlan model)
         {
             var plan = _budgetPlanRepository.GetById(model.Id);
-            if (plan is null) return NotFound();
-            if (!CanManagePlan(plan)) return Forbid();
+            if (plan is null)
+            {
+                _logger.LogWarning("Budget plan delete submitted for missing id {BudgetPlanId}.", model.Id);
+                return NotFound();
+            }
+            if (!CanManagePlan(plan))
+            {
+                _logger.LogWarning("Budget plan {BudgetPlanId} delete submit forbidden for current user.", model.Id);
+                return Forbid();
+            }
 
             try
             {
                 _budgetPlanRepository.Delete(plan);
+                _logger.LogInformation("Budget plan {BudgetPlanId} deleted.", plan.Id);
                 return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
+                _logger.LogWarning(ex, "Budget plan {BudgetPlanId} could not be deleted because related data exists.", plan.Id);
                 ModelState.AddModelError(string.Empty, "Unable to delete this budget plan because related data exists.");
                 return View(plan);
             }

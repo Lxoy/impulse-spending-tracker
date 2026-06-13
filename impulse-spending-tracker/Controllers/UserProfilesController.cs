@@ -12,13 +12,16 @@ namespace impulse_spending_tracker.Controllers
     {
         private readonly UserProfileRepository _userProfileRepository;
         private readonly UserManager<impulse_spending_tracker.Models.AppUser> _userManager;
+        private readonly ILogger<UserProfilesController> _logger;
 
         public UserProfilesController(
             UserProfileRepository userProfileRepository,
-            UserManager<impulse_spending_tracker.Models.AppUser> userManager)
+            UserManager<impulse_spending_tracker.Models.AppUser> userManager,
+            ILogger<UserProfilesController> logger)
         {
             _userProfileRepository = userProfileRepository;
             _userManager = userManager;
+            _logger = logger;
         }
 
         private bool CanManageUserProfile(impulse_spending_tracker.Models.UserProfile user)
@@ -73,6 +76,7 @@ namespace impulse_spending_tracker.Controllers
                 .ThenBy(u => u.FirstName)
                 .ToList();
 
+            _logger.LogInformation("Loaded {Count} user profiles.", users.Count);
             return View(users);
         }
 
@@ -97,6 +101,7 @@ namespace impulse_spending_tracker.Controllers
             var user = _userProfileRepository.GetById(id);
             if (user is null)
             {
+                _logger.LogWarning("User profile details requested for missing id {UserProfileId}.", id);
                 return NotFound();
             }
 
@@ -111,11 +116,13 @@ namespace impulse_spending_tracker.Controllers
             var user = _userProfileRepository.GetById(id);
             if (user is null)
             {
+                _logger.LogWarning("User profile edit requested for missing id {UserProfileId}.", id);
                 return NotFound();
             }
 
             if (!CanManageUserProfile(user))
             {
+                _logger.LogWarning("User profile {UserProfileId} edit forbidden for current user.", id);
                 return Forbid();
             }
 
@@ -131,11 +138,13 @@ namespace impulse_spending_tracker.Controllers
             var existingUser = _userProfileRepository.GetById(user.Id);
             if (existingUser is null)
             {
+                _logger.LogWarning("User profile edit submitted for missing id {UserProfileId}.", user.Id);
                 return NotFound();
             }
 
             if (!CanManageUserProfile(existingUser))
             {
+                _logger.LogWarning("User profile {UserProfileId} edit submit forbidden for current user.", user.Id);
                 return Forbid();
             }
 
@@ -162,6 +171,7 @@ namespace impulse_spending_tracker.Controllers
             user.AppUserId = existingUser.AppUserId;
             user.CreatedAt = existingUser.CreatedAt;
             _userProfileRepository.Update(user);
+            _logger.LogInformation("User profile {UserProfileId} updated.", user.Id);
             return RedirectToAction(nameof(Details), new { id = user.Id });
         }
 
@@ -172,11 +182,13 @@ namespace impulse_spending_tracker.Controllers
             var user = _userProfileRepository.GetById(id);
             if (user is null)
             {
+                _logger.LogWarning("User profile delete requested for missing id {UserProfileId}.", id);
                 return NotFound();
             }
 
             if (!CanManageUserProfile(user))
             {
+                _logger.LogWarning("User profile {UserProfileId} delete forbidden for current user.", id);
                 return Forbid();
             }
 
@@ -191,21 +203,25 @@ namespace impulse_spending_tracker.Controllers
             var user = _userProfileRepository.GetById(model.Id);
             if (user is null)
             {
+                _logger.LogWarning("User profile delete submitted for missing id {UserProfileId}.", model.Id);
                 return NotFound();
             }
 
             if (!CanManageUserProfile(user))
             {
+                _logger.LogWarning("User profile {UserProfileId} delete submit forbidden for current user.", model.Id);
                 return Forbid();
             }
 
             try
             {
                 _userProfileRepository.Delete(user);
+                _logger.LogInformation("User profile {UserProfileId} deleted.", user.Id);
                 return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
+                _logger.LogWarning(ex, "User profile {UserProfileId} could not be deleted because related data exists.", user.Id);
                 ModelState.AddModelError(string.Empty, "Unable to delete this user profile because related data exists.");
                 return View(user);
             }

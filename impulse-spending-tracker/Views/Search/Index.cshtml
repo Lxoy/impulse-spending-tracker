@@ -1,0 +1,60 @@
+@model GlobalSearchViewModel
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<section class="index-shell global-search-page">
+    <nav aria-label="breadcrumb" class="index-breadcrumb mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Search</li>
+        </ol>
+    </nav>
+
+    <div class="index-hero mb-4">
+        <div class="index-hero__grid">
+            <div class="index-hero__copy">
+                <p class="index-kicker">Global search</p>
+                <h1 class="mb-2">Find pages and routes</h1>
+                <p class="mb-0 text-muted">Search the app navigation and common create routes.</p>
+            </div>
+            <span class="index-count-chip">@Model.Results.Count result@(Model.Results.Count == 1 ? "" : "s")</span>
+        </div>
+
+        <form class="global-search-page__form mt-3" asp-controller="Search" asp-action="Index" method="get" role="search">
+            <input class="form-control" type="search" name="query" value="@Model.Query" placeholder="Search pages, menu items, routes..." aria-label="Search pages and routes" autofocus />
+            <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+    </div>
+
+    @if (!Model.Results.Any())
+    {
+        <div class="index-empty p-4 text-center">
+            <h2 class="h5 mb-2">No results found</h2>
+            <p class="text-muted mb-0">Try searching for purchases, budget, wishlist, trigger, or users.</p>
+        </div>
+    }
+    else
+    {
+        <div class="global-search-results">
+            @foreach (var result in Model.Results)
+            {
+                <a class="global-search-result" href="@result.Url">
+                    <span class="global-search-result__meta">
+                        @result.Category
+                        @if (result.IsMenuItem)
+                        {
+                            <span>Menu</span>
+                        }
+                    </span>
+                    <strong>@result.Title</strong>
+                    <span>@result.Description</span>
+                    <code>@result.Url</code>
+                </a>
+            }
+        </div>
+    }
+</section>

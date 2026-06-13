@@ -10,10 +10,14 @@ namespace impulse_spending_tracker.Controllers
     public class MerchantsController : Controller
     {
         private readonly MerchantRepository _merchantRepository;
+        private readonly ILogger<MerchantsController> _logger;
 
-        public MerchantsController(MerchantRepository merchantRepository)
+        public MerchantsController(
+            MerchantRepository merchantRepository,
+            ILogger<MerchantsController> logger)
         {
             _merchantRepository = merchantRepository;
+            _logger = logger;
         }
 
         [HttpGet("")]
@@ -25,6 +29,7 @@ namespace impulse_spending_tracker.Controllers
                 .ThenBy(m => m.Category)
                 .ToList();
 
+            _logger.LogInformation("Loaded {Count} merchants.", merchants.Count);
             return View(merchants);
         }
 
@@ -48,6 +53,7 @@ namespace impulse_spending_tracker.Controllers
             var merchant = _merchantRepository.GetById(id);
             if (merchant is null)
             {
+                _logger.LogWarning("Merchant details requested for missing id {MerchantId}.", id);
                 return NotFound();
             }
 
@@ -68,10 +74,12 @@ namespace impulse_spending_tracker.Controllers
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Merchant create validation failed for {MerchantName}.", merchant.Name);
                 return View(merchant);
             }
 
             _merchantRepository.Create(merchant);
+            _logger.LogInformation("Merchant {MerchantId} created: {MerchantName}.", merchant.Id, merchant.Name);
             return RedirectToAction(nameof(Index));
         }
 
@@ -82,6 +90,7 @@ namespace impulse_spending_tracker.Controllers
             var merchant = _merchantRepository.GetById(id);
             if (merchant is null)
             {
+                _logger.LogWarning("Merchant edit requested for missing id {MerchantId}.", id);
                 return NotFound();
             }
 
@@ -95,10 +104,12 @@ namespace impulse_spending_tracker.Controllers
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Merchant edit validation failed for id {MerchantId}.", merchant.Id);
                 return View(merchant);
             }
 
             _merchantRepository.Update(merchant);
+            _logger.LogInformation("Merchant {MerchantId} updated.", merchant.Id);
             return RedirectToAction(nameof(Details), new { id = merchant.Id });
         }
 
@@ -109,6 +120,7 @@ namespace impulse_spending_tracker.Controllers
             var merchant = _merchantRepository.GetById(id);
             if (merchant is null)
             {
+                _logger.LogWarning("Merchant delete requested for missing id {MerchantId}.", id);
                 return NotFound();
             }
 
@@ -123,16 +135,19 @@ namespace impulse_spending_tracker.Controllers
             var merchant = _merchantRepository.GetById(model.Id);
             if (merchant is null)
             {
+                _logger.LogWarning("Merchant delete submitted for missing id {MerchantId}.", model.Id);
                 return NotFound();
             }
 
             try
             {
                 _merchantRepository.Delete(merchant);
+                _logger.LogInformation("Merchant {MerchantId} deleted.", merchant.Id);
                 return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
+                _logger.LogWarning(ex, "Merchant {MerchantId} could not be deleted because related purchases exist.", merchant.Id);
                 ModelState.AddModelError(string.Empty, "Unable to delete this merchant because related purchases exist.");
                 return View(merchant);
             }

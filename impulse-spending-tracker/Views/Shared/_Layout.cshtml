@@ -1,4 +1,8 @@
 ﻿<!DOCTYPE html>
+@{
+    var globalSearchQuery = Context.Request.Query["query"].ToString();
+}
+
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -60,6 +64,10 @@
                 </div>
             </div>
         </nav>
+        <form class="app-global-search app-global-search--below" asp-area="" asp-controller="Search" asp-action="Index" method="get" role="search">
+            <input class="form-control form-control-sm" type="search" name="query" value="@globalSearchQuery" placeholder="Search pages and routes..." aria-label="Search pages and routes" />
+            <button class="btn btn-sm btn-outline-primary" type="submit">Search</button>
+        </form>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
